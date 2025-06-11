@@ -11,7 +11,7 @@ EN: This project is licensed under the MIT License. For more details, see the [L
 ES: Este proyecto está licenciado bajo la Licencia MIT. Para más detalles, consulta el archivo [LICENSE](LICENSE).
 
 
-## Contribuir
+# Contribuir
 
 EN: Contributions are welcome! You can find the source code on [my GitHub](https://github.com/Kirutre/firefox_custom_sounds).
 
