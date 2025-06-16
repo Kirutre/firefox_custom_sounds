@@ -1,0 +1,150 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    border-radius: 8px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section p {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #444;
+    font-size: 0.95em;
+}
+
+.sound-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.category-button,
+#toogleSpecificSound,
+#applyCustomSound {
+    padding: 8px 15px;
+    border: 1px solid blue;
+    background-color: #e0eaff;
+    color: #00008b;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font-size: 0.9em;
+    flex-shrink: 0;
+}
+
+.category-button:hover,
+#toogleSpecificSound:hover,
+#applyCustomSound:hover {
+    background-color: #c4d9ff;
+}
+
+.category-button.active {
+    background-color: #28a745;
+}
+
+.category-button.inactive {
+    background-color: #dc3545;
+}
+
+#toggleGlobalSounds.active {
+    background-color: #17a2b8;
+}
+#toggleGlobalSounds.inactive {
+    background-color: #6c757d;
+}
+
+.dropdown-sound,
+.dropdown-select-sound {
+    padding: 8px 15px;
+    border: 1px solid blue;
+    border-radius: 4px;
+    background-color: #e0eaff;
+    color: #00008b;
+    cursor: pointer;
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+.upload-section .upload-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.file-upload-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.file-name-display {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    display: inline-block;
+    min-width: 150px;
+    line-height: normal;
+}
+
+.file-name-display:hover {
+    background-color: #f5f5f5;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
