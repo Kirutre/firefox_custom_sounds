@@ -1,171 +1,101 @@
-let userPreferences = {
-    soundsEnabledGlobal: true,
+const STORAGE_KEY_EVENT = 'eventSoundSettings';
 
-    categoryStatus: {
-        tabSounds: true,
-        commonKeySounds: true,
-        specialKeySounds: true
-    },
-
-    specificSoundsStatus: {},
-
-    customSounds: {}
-}
-
-browser.storage.local.get('userPreferences').then((storedPrefs) => {
-    if (storedPrefs.userPreferences) {
-        userPreferences = { ...userPreferences, ...storedPrefs.userPreferences};
-    }
-
-    console.log('Preferencias del usuario cargadas: ', userPreferences);
-
-    preloadAllSounds();
-});
+//* ------ Browser Sounds ------
 
 const tabSounds = {
-    'newTab': 'new_tab.mp3',
-    'closeTab': 'close_tab.mp3'
+    'tab_created': browser.runtime.getURL('sounds/new_tab.mp3'),
+    'tab_removed': browser.runtime.getURL('sounds/close_tab.mp3')
 };
 
-const commonKeySounds = [
-    'key_sound_1.mp3',
-    'key_sound_2.mp3',
-    'key_sound_3.mp3',
-    'key_sound_4.mp3'
-];
 
-const specialKeySounds = {
-    'spacebar': 'spacebar_sound.mp3',
-    'generalSpecial': 'special_key_sound.mp3',
-    'enter': 'enter_sound.mp3',
-    'backspace': 'backspace_sounds.mp3'
-};
+//* ------ Playback Functions ------
 
-const preloadedSounds = {};
-
-const preloadAudio = (soundName, soundPathOrDataUrl) => {
-    if (!preloadedSounds[soundName]) {
-        const url = soundPathOrDataUrl.startsWith('data:') ? soundPathOrDataUrl : browser.runtime.getURL(`sounds/${soundPathOrDataUrl}`);
-        const audio = new Audio(url);
-        audio.preload = 'auto';
-        preloadedSounds[soundName] = audio;
-    }
-};
-
-const preloadAllSounds = () => {
-    preloadAudio('newTab', tabSounds.newTab);
-    preloadAudio('closeTab', tabSounds.closeTab);
-
-    commonKeySounds.forEach((soundName, index) => {
-        preloadAudio(soundName, soundName);
-    });
-
-    for (const key in specialKeySounds) {
-        preloadAudio(key, specialKeySounds[key]);
+/** Plays an audio file given its URL 
+ * @param {string} soundURL
+ */
+const playSound = soundURL => {
+    if (!soundURL) {
+        console.error('URL not provided');
+        return;
     }
 
-    [
-        tabSounds.newTab, tabSounds.closeTab,
-        ...commonKeySounds,
-        ...Object.values(specialKeySounds)
-    ].forEach(soundName => {
-        if (userPreferences.specificSoundsStatus[soundName] === undefined) {
-            userPreferences.specificSoundsStatus[soundName] = true;
-        }
-    });
+    const audio = new Audio(soundURL);
 
-    for (const alias in userPreferences.customSounds) {
-        preloadAudio(alias, userPreferences.customSounds[alias]);
-    }
-} 
-
-const playSound = (soundAlias, category) => {
-    if (!userPreferences.soundsEnabledGlobal) return;
-
-    if (category && userPreferences.categoryStatus[category] !== true) return;
-
-    let actualSoundName = soundAlias;
-
-    if (soundAlias === 'newTab') actualSoundName = tabSounds.newTab;
-    else if (soundAlias === 'closeTab') actualSoundName = tabSounds.closeTab;
-    else if (specialKeySounds[soundAlias]) actualSoundName = specialKeySounds[soundAlias];
-
-    if (userPreferences.specificSoundsStatus[actualSoundName] !== true) return;
-
-    if (preloadedSounds[soundAlias]) {
-        preloadedSounds[soundAlias].currentTime = 0;
-        preloadedSounds[soundAlias].play().catch(e => {
-            console.error(`Error al reproducir el sonido ${soundAlias}: `, e);
+    audio.play()
+        .then(() => {
+            console.log(`Sound played: ${soundURL}`);
+        })
+        .catch(error => {
+            console.error(`Error playing sound: ${soundURL}, error: ${error}`);
         });
-    }
-    
-    else {
-        console.warn(`Sonido "${soundAlias}" no encontrado en preloadedSounds.`);
+};
+
+/** Check if an event sound is enabled before playing it
+ * @param {string} eventName - 'tab_open' o 'tab_close'
+ */
+function checkAndPlayEventSound(eventName) {
+    browser.storage.local.get(STORAGE_KEY_EVENT)
+        .then(result => {
+            const settings = result[STORAGE_KEY_EVENT] || {};
+
+            const isEnabled = settings[eventName] !== false;
+
+            if (isEnabled) {
+                playSound(tabSounds[eventName]);
+            } else {
+                console.log(`Playback of ${eventName} disabled by the user`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error verifying the configuration for ${eventName}: error: ${error}`);
+
+            playSound(tabSounds[eventName]);
+        });
+}
+
+
+//* ------ Event Handlers ------
+
+/** Executed when a tab is created
+ * * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onCreated
+ * @param {tabs.Tab} tab
+ */
+const handleTabCreated = tab => {
+    console.log(`New tab created: ${tab.id}`);
+
+    checkAndPlayEventSound('tab_created');
+};
+
+/** Executed when a tab is removed
+ * * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onRemoved
+ * @param {integer} tabId
+ * @param {object} removeInfo Includes windowId {integer} and isWindowClosing {boolean}
+ */
+const handleTabRemoved = (tabId, removeInfo) => {
+    if (!removeInfo.isWindowClosing) {
+        console.log(`Removed tab: ${tabId}`);
+
+        checkAndPlayEventSound('tab_removed');
     }
 };
 
 
-//listeners
-browser.tabs.onCreated.addListener(() => {
-    playSound('newTab', 'tabSounds');
-});
+//* ------ Listeners ------
 
-browser.tabs.onRemoved.addListener(() => {
-    playSound('closeTab', 'tabSounds');
-});
+browser.tabs.onCreated.addListener(handleTabCreated);
+browser.tabs.onRemoved.addListener(handleTabRemoved);
 
-browser.runtime.onMessage.addListener((message) => {
-    if (message.type === 'keyPress') {
-        const keyPress = message.key;
+browser.action.onClicked.addListener(() => {
+    const optionsUrl = browser.runtime.getURL("options/options.html");
 
-        let soundAliasToPlay;
-        let categoryToPlay = 'keySounds';
-
-        if (keyPress === ' ') {
-            soundAliasToPlay = 'spacebar';
-            categoryToPlay = 'specialKeySounds';
-        }
-        
-        else if (keyPress === 'Enter') {
-            soundAliasToPlay = 'enter';
-            categoryToPlay = 'specialKeySounds';
-        }
-        
-        else if (keyPress === 'Backspace') {
-            soundAliasToPlay = 'backspace';
-            categoryToPlay = 'specialKeySounds';
-        }
-        
-        else if (keyPress.length > 1) { // Unmarked Special Keys
-            soundAliasToPlay = 'generalSpecial';
-            categoryToPlay = 'specialKeySounds';
-        }
-        
-        else {
-            const randomIndex = Math.floor(Math.random() * commonKeySounds.length);
-            
-            soundAliasToPlay = commonKeySounds[randomIndex];
-            categoryToPlay = 'commonKeySounds';            
-        }
-
-        playSound(soundAliasToPlay, categoryToPlay);
-    } 
-
-    else if (message.type === 'updatePreference') {
-        if (message.category) {
-            userPreferences.categoryStatus[message.category] = message.enabled;
-        }
-
-        else if (message.specificSound) {
-            userPreferences.categoryStatus[message.specificSound] = message.enabled;
-        }
-
-        else if (message.customSound) {
-            userPreferences.customSounds[message.customSound.alias] = message.customSound.dataUrl;
-            preloadAudio(message.customSound.alias, message.customSound.dataUrl); 
-        }
-
-        browser.storgae.local.set({ userPreferences: userPreferences });
-        console.log('Preferencias actualizadas y guardadas: ', userPreferences);
-    }
+    browser.tabs.create({
+        url: optionsUrl,
+        active: true
+    })
+    .then(tab => {
+        console.log(`Options page open in the ID tab: ${tab.id}`);
+    })
+    .catch(error => {
+        console.error(`Error opening the options page in a new tab: ${error}`);
+    });
 });

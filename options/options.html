@@ -1,0 +1,79 @@
+<!--* Don't expect too much from the page; I know very little about design, HTML, and CSS XDD. I did what I could, guided by the Tailwind documentation (which is excellent btw)-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Sounds - Kirutre</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="grid place-items-center min-h-screen bg-slate-950">
+  <div class="w-4xl grid grid-rows-[auto_1fr] gap-4">
+    <div id="presentation" class="bg-slate-800 rounded-lg shadow-md shadow-violet-700 py-2">
+      <h2 class="text-white font-bold text-3xl py-1 px-4">Custom Sounds - Kirutre</h2>
+    </div>
+
+    <div id="options" class="grid grid-rows-[auto_auto_1fr] gap-4 bg-slate-800 p-4 rounded-lg max-h-[85vh] self-start shadow-md shadow-violet-700">
+      <h2 class="text-white font-bold text-3xl">Config Options</h2>
+
+      <div class="bg-slate-700 flex items-center p-4 rounded-md shadow-sm shadow-gray-500">
+        <label for="upload-sounds" class="text-white font-bold text-2xl mr-4">Upload your sounds: </label>
+
+        <input type="file" id="upload-sounds" class="file:bg-violet-500 file:text-white file:font-semibold text-white font-semibold">
+      </div>
+
+      <div class="bg-slate-700 p-4 rounded-md self-start shadow-sm shadow-gray-500">
+        <h3 class="text-white font-semibold text-2xl pb-3">List of Sounds</h3>
+
+        <div class="max-h-[60vh] overflow-y-auto">
+          <ul class="flex flex-col gap-3">
+
+            <li id="sound-1" class="flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md shrink">
+              <p class="text-white font-semibold text-xl w-8/12">enter_sound.mp3</p>
+
+              <button id="current-key" class="text-white text-xl bg-purple-600 px-3 py-1 rounded-full hover:bg-purple-700 transition w-1/12">Enter</button>
+
+              <div class="relative inline-block w-15 h-5">
+                  <input id="sound-1-check" type="checkbox" class="peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300" />
+
+                  <label for="sound-1-check" class="absolute top-0 left-0 w-6 h-6 bg-gray-400 rounded-full border border-slate-800 transition-transform duration-500 peer-checked:translate-x-9 peer-checked:border-slate-800 peer-checked:bg-white cursor-pointer"></label>
+              </div>
+              
+              <button id="delete" class="group w-10 h-11 cursor-pointer">
+                <svg class="fill-red-600 w-full h-full" viewbox="0 -1 16 16">
+                  <path d="M5 5v7q0 2 2 2h2q2 0 2-2v-8h1v8q0 3-2 3h-4q-2 0-2-3v-8h1v1M6 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2M9 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2"/>
+                  
+                  <path class="trash-can-lid transition-transform duration-300 origin-[70%_50%] group-hover:-translate-y-0.5 group-hover:rotate-12" d="M4 4q-1 0-1-.5 0-.5 1-.5h2q0-2 1-2h2q1 0 1 2h2q1 0 1 .5 0 .5-1 .5h-8M7 3v-1h2v1" fill-rule="evenodd"/>
+                </svg>
+              </button>
+            </li>
+
+            <li id="sound-2" class="flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md">
+              <p class="text-white font-semibold text-xl w-8/12">k_sound.mp3</p>
+
+              <button id="current-key" class="text-white text-xl bg-purple-600 px-3 py-1 rounded-full hover:bg-purple-700 transition w-1/12">K</button>
+              
+              <div class="relative inline-block w-15 h-5">
+                  <input id="sound-2-check" type="checkbox" class="peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300" />
+
+                  <label for="sound-2-check" class="absolute top-0 left-0 w-6 h-6 bg-gray-400 rounded-full border border-slate-800 transition-transform duration-500 peer-checked:translate-x-9 peer-checked:border-slate-800 peer-checked:bg-white cursor-pointer"></label>
+              </div>
+              
+              <button id="delete" class="group w-10 h-11 cursor-pointer">
+                <svg class="fill-red-600 w-full h-full" viewbox="0 -1 16 16">
+                  <path d="M5 5v7q0 2 2 2h2q2 0 2-2v-8h1v8q0 3-2 3h-4q-2 0-2-3v-8h1v1M6 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2M9 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2"/>
+                  
+                  <path class="trash-can-lid transition-transform duration-300 origin-[70%_50%] group-hover:-translate-y-0.5 group-hover:rotate-12" d="M4 4q-1 0-1-.5 0-.5 1-.5h2q0-2 1-2h2q1 0 1 2h2q1 0 1 .5 0 .5-1 .5h-8M7 3v-1h2v1" fill-rule="evenodd"/>
+                </svg>
+              </button>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
