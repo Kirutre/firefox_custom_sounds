@@ -1,16 +1,6 @@
-const STORAGE_KEY_EVENT = 'eventSoundSettings';
-
-//* ------ Browser Sounds ------
-
-const tabSounds = {
-    'tab_created': browser.runtime.getURL('sounds/new_tab.mp3'),
-    'tab_removed': browser.runtime.getURL('sounds/close_tab.mp3')
-};
-
-
 //* ------ Playback Functions ------
 
-/** Plays an audio file given its URL 
+/** Plays a sound
  * @param {string} soundURL
  */
 const playSound = soundURL => {
@@ -30,29 +20,6 @@ const playSound = soundURL => {
         });
 };
 
-/** Check if an event sound is enabled before playing it
- * @param {string} eventName - 'tab_open' o 'tab_close'
- */
-function checkAndPlayEventSound(eventName) {
-    browser.storage.local.get(STORAGE_KEY_EVENT)
-        .then(result => {
-            const settings = result[STORAGE_KEY_EVENT] || {};
-
-            const isEnabled = settings[eventName] !== false;
-
-            if (isEnabled) {
-                playSound(tabSounds[eventName]);
-            } else {
-                console.log(`Playback of ${eventName} disabled by the user`);
-            }
-        })
-        .catch(error => {
-            console.error(`Error verifying the configuration for ${eventName}: error: ${error}`);
-
-            playSound(tabSounds[eventName]);
-        });
-}
-
 
 //* ------ Event Handlers ------
 
@@ -60,10 +27,17 @@ function checkAndPlayEventSound(eventName) {
  * * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onCreated
  * @param {tabs.Tab} tab
  */
-const handleTabCreated = tab => {
+const handleTabCreated = async (tab) => {
     console.log(`New tab created: ${tab.id}`);
 
-    checkAndPlayEventSound('tab_created');
+    const storageData = await browser.storage.local.get('custom_sounds_config');
+    const event = storageData.custom_sounds_config && storageData.custom_sounds_config.created_tab;
+
+    if (event && event.active) {
+        const soundURL = event.base64;
+
+        playSound(soundURL);
+    }
 };
 
 /** Executed when a tab is removed
@@ -71,11 +45,18 @@ const handleTabCreated = tab => {
  * @param {integer} tabId
  * @param {object} removeInfo Includes windowId {integer} and isWindowClosing {boolean}
  */
-const handleTabRemoved = (tabId, removeInfo) => {
+const handleTabRemoved = async (tabId, removeInfo) => {
     if (!removeInfo.isWindowClosing) {
         console.log(`Removed tab: ${tabId}`);
 
-        checkAndPlayEventSound('tab_removed');
+        const storageData = await browser.storage.local.get('custom_sounds_config');
+        const event = storageData.custom_sounds_config && storageData.custom_sounds_config.removed_tab;
+
+        if (event && event.active) {
+            const soundURL = event.base64;
+
+            playSound(soundURL);
+        }
     }
 };
 

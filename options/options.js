@@ -1,67 +1,110 @@
-//* Extension Configuration
+const uploadSoundButton = document.getElementById('upload-sounds');
+const soundList = document.getElementById('sound-list');
+const saveSoundButton = document.getElementById('save-sound');
 
-const STORAGE_KEY_EVENT = 'eventSoundSettings';
-const STORAGE_KEY_CUSTOM = 'customSoundSettings';
-
-
-//* ------ Event Configuration Loading and Saving Functions ------
-
-// Load the state of the checkboxes from storage and update the UI
-function loadEventSettings() {
-    browser.storage.local.get(STORAGE_KEY_EVENT)
-        .then(result => {
-            const settings = result[STORAGE_KEY_EVENT] || {};
-            
-            // If the state is not saved, 'true' is assumed.
-            document.getElementById('tab-open-toggle').checked = settings.tab_open !== false;
-            document.getElementById('tab-close-toggle').checked = settings.tab_close !== false;
-        })
-        .catch(error => console.error(`Error loading event configuration: ${error}`));
+const getSoundLibraryState = () => {
+    return browser.storage.local.get('sounds_library');
 }
 
-// Save the state of the checkboxes in storage.
-function saveEventSetting(event) {
-    const toggleId = event.target.id;
-    const isEnabled = event.target.checked;
+const generateUUID = (prefix = 'sound-') => {
+    const timestamp = Date.now().toString(36);
+    const randomPart = Math.random().toString(36).substring(2, 5);
+
+    return `${prefix}${timestamp}-${randomPart}`;
+}
+
+/** Convert binary data into a string
+ * @param {File} file
+ */
+const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => { 
+    const reader = new FileReader();
     
-    // Map the toggle ID to the key name
-    let key;
-    if (toggleId === 'tab-open-toggle') {
-        key = 'tab_created';
-    } else if (toggleId === 'tab-close-toggle') {
-        key = 'tab_removed';
-    } else {
-        return;
-    }
+    reader.readAsDataURL(file); 
+    
+    reader.onload = () => resolve(reader.result);
+    
+    reader.onerror = error => reject(error);
+  });
+}
 
-    // Get the current configuration to update only one key
-    browser.storage.local.get(STORAGE_KEY_EVENT)
-        .then(result => {
-            const settings = result[STORAGE_KEY_EVENT] || {};
-            settings[key] = isEnabled;
+/** Update the sound related to a key
+ * @param {string} soundUUID
+ * @param {string} oldEventKey
+ * @param {string} newEventKey 
+ * @param {boolean} EventState
+ */
+const updateSound = async (soundUUID, oldEventKey, newEventKey, eventState = true) => {
+    const storageData = await browser.storage.local.get('custom_sounds_config');
+    const configs = storageData.custom_sounds_config || {};
 
-            browser.storage.local.set({ [STORAGE_KEY_EVENT]: settings })
-                .then(() => console.log(`Event Settings '${key}' saved: ${isEnabled}`))
-                .catch(error => console.error(`Error saving settings: ${error}`));
-        });
+    configs[newEventKey] = {
+        soundUUID,
+        active: eventState
+    };
+
+    delete configs[oldEventKey];
+
+    await browser.storage.local.set({
+        'custom_sounds_config': configs
+    });
+}
+
+/** Save a sound in the storage
+ * @param {File} sound
+ */
+const saveSound = async (sound) => { 
+    const soundURL = await fileToBase64(sound);
+    const soundUUID = generateUUID();
+
+    const storageData = await getSoundLibraryState();
+    const currentLibrary = storageData.sounds_library || {};
+
+    const newLibrary = {
+        ...currentLibrary,
+        [soundUUID]: {
+            soundURL,
+            name: sound.name
+        }
+    };
+
+    console.log(newLibrary);
+
+    await browser.storage.local.set({
+        'sounds_library': newLibrary
+    });
 }
 
 
-//* ------ Logic for Custom Sounds ------
+soundList.addEventListener('click', async (e) => {
+    const deleteButton = e.target.closest('.sound-delete');
 
-// TODO: Implement audio file uploading, Base64 conversion, or URL.createObjectURL,
-// and saved along with the shortcut in browser.storage.local (STORAGE_KEY_CUSTOM).
+    if (deleteButton) {
+        const soundToDelete = deleteButton.closest('li');
+    
+        if (soundToDelete) {
+            const UUIDToDelete = soundToDelete.dataset.uuid;
 
+            const storageData = await getSoundLibraryState();
+            const currentLibrary = storageData.sounds_library || {};
 
-//* ------ Initialization ------
+            delete currentLibrary[UUIDToDelete]
+            
+            browser.storage.local.set({
+                'sounds_library': currentLibrary
+            });
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadEventSettings();
-
-    document.getElementById('tab-open-toggle').addEventListener('change', saveEventSetting);
-    document.getElementById('tab-close-toggle').addEventListener('change', saveEventSetting);
-
-    // TODO: Add listeners for the custom sounds section
-    // document.getElementById('add-sound-button').addEventListener('click', saveCustomSound);
-    // document.getElementById('shortcut-input').addEventListener('keydown', captureShortcut);
+            soundToDelete.remove();
+        }
+    }
 });
+
+saveSoundButton.addEventListener('click', e => {
+    if (uploadSoundButton.files.length > 0) {
+        const sound = uploadSoundButton.files[0];
+
+        saveSound(sound);
+    }
+});
+
+// TODO: add validation to repetitive file sound (same name), add createSoundLi -> <li>, add change-key-event, in this moment i don't remember anymore, have luck tomorrow :D

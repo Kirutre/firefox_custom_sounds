@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Custom Sounds - Kirutre</title>
   <link rel="stylesheet" href="output.css">
+  <script src="options.js" defer></script>
 </head>
 
 <body class="grid place-items-center min-h-screen bg-slate-950">
@@ -19,29 +20,31 @@
       <h2 class="text-white font-bold text-3xl">Config Options</h2>
 
       <div class="bg-slate-700 flex items-center p-4 rounded-md shadow-sm shadow-gray-500">
-        <label for="upload-sounds" class="text-white font-bold text-2xl mr-4">Upload your sounds: </label>
+        <label for="upload-sounds" class="text-white font-semibold text-2xl mr-4">Upload your sounds: </label>
 
-        <input type="file" id="upload-sounds" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-700 text-white">
+        <input type="file" id="upload-sounds" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-700 text-white mr-25" accept="audio/*">
+
+        <button id="save-sound" class="text-white text-sm bg-violet-600 py-1 rounded-full hover:bg-violet-700 transition w-1/12">Guardar Sonido</button>
       </div>
 
       <div class="bg-slate-700 p-4 rounded-md self-start shadow-sm shadow-gray-500">
         <h3 class="text-white font-semibold text-2xl pb-3">List of Sounds</h3>
 
         <div class="max-h-[60vh] overflow-y-auto">
-          <ul class="flex flex-col gap-3">
+          <ul id="sound-list" class="flex flex-col gap-3">
 
-            <li id="sound-1" class="flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md shrink">
+            <li data-uuid="1" class="flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md shrink">
               <p class="text-white font-semibold text-xl w-8/12">enter_sound.mp3</p>
 
-              <button id="current-key" class="text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12">Set a key</button>
+              <button class="change-event-key cursor-pointer text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12">Set an action</button>
 
               <div class="relative inline-block w-15 h-5">
-                  <input id="sound-1-check" type="checkbox" class="peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300" />
+                <input id="1" type="checkbox" class="event-check peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300"/>
 
-                  <label for="sound-1-check" class="absolute top-0 left-0 w-6 h-6 bg-gray-400 rounded-full border border-slate-800 transition-transform duration-500 peer-checked:translate-x-9 peer-checked:border-slate-800 peer-checked:bg-white cursor-pointer"></label>
+                <label for="1" class="absolute top-0 left-0 w-6 h-6 bg-gray-400 rounded-full border border-slate-800 transition-transform duration-500 peer-checked:translate-x-9 peer-checked:border-slate-800 peer-checked:bg-white cursor-pointer"></label>  
               </div>
               
-              <button id="delete" class="group w-10 h-11 cursor-pointer">
+              <button class="sound-delete group w-10 h-11 cursor-pointer">
                 <svg class="fill-red-600 w-full h-full" viewbox="0 -1 16 16">
                   <path d="M5 5v7q0 2 2 2h2q2 0 2-2v-8h1v8q0 3-2 3h-4q-2 0-2-3v-8h1v1M6 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2M9 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2"/>
                   
@@ -50,18 +53,18 @@
               </button>
             </li>
 
-            <li id="sound-2" class="flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md">
+            <li data-uuid="2" class="flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md">
               <p class="text-white font-semibold text-xl w-8/12">k_sound.mp3</p>
 
-              <button id="current-key" class="text-white text-xl bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12">K</button>
-              
-              <div class="relative inline-block w-15 h-5">
-                  <input id="sound-2-check" type="checkbox" class="peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300" />
+              <button class="change-event-key cursor-pointer text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12">Set an action</button>
 
-                  <label for="sound-2-check" class="absolute top-0 left-0 w-6 h-6 bg-gray-400 rounded-full border border-slate-800 transition-transform duration-500 peer-checked:translate-x-9 peer-checked:border-slate-800 peer-checked:bg-white cursor-pointer"></label>
+              <div class="relative inline-block w-15 h-5">
+                <input id="2" type="checkbox" class="event-check peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300"/>
+
+                <label for="2" class="absolute top-0 left-0 w-6 h-6 bg-gray-400 rounded-full border border-slate-800 transition-transform duration-500 peer-checked:translate-x-9 peer-checked:border-slate-800 peer-checked:bg-white cursor-pointer"></label>  
               </div>
               
-              <button id="delete" class="group w-10 h-11 cursor-pointer">
+              <button class="sound-delete group w-10 h-11 cursor-pointer">
                 <svg class="fill-red-600 w-full h-full" viewbox="0 -1 16 16">
                   <path d="M5 5v7q0 2 2 2h2q2 0 2-2v-8h1v8q0 3-2 3h-4q-2 0-2-3v-8h1v1M6 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2M9 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2"/>
                   
