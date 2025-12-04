@@ -2,9 +2,11 @@ const uploadSoundButton = document.getElementById('upload-sounds');
 const soundList = document.getElementById('sound-list');
 const saveSoundButton = document.getElementById('save-sound');
 
-/** @returns {Object} */
-const getSoundLibraryState = () => {
-    return browser.storage.local.get('sounds_library');
+/** @returns {Promise<Object>} */
+const getExtensionData = async () => {
+    const data = await browser.storage.local.get('custom_sounds_config');
+
+    return data.custom_sounds_config || {};
 }
 
  /** @param {string} prefix    @returns {string} */
@@ -12,22 +14,43 @@ const generateUUID = (prefix = 'sound-') => {
     return `${prefix}${crypto.randomUUID()}`;
 }
 
-/** Check if the sound exists in the library 
+/** Check if the sound exists in the storage 
  * @param {string} soundName
  * @returns {Promise<boolean>}
  */
 const doesSoundExist = async (soundName) => {
-    const storageData = await getSoundLibraryState();
-    const soundsLibrary = storageData.sounds_library || {};
+    const storageData = await getExtensionData();
 
-    const sounds = Object.values(soundsLibrary);
+    console.log(storageData);
+
+    const sounds = Object.values(storageData);
 
     const exists = sounds.some(sound => sound.name === soundName);
+
+    console.log(exists);
 
     return exists;
 }
 
-// TODO: add better error handling
+/** Check if a event key is already used
+ * @param {string} eventKey  @param {string} soundUUID
+ * @returns {Promise<boolean>}
+ */
+const isKeyAlreadyUsed = async (eventKey, soundUUID) => {
+    const storageData = await getExtensionData();
+    const sounds = Object.entries(storageData);
+
+    const isUsed = sounds.some(([uuid, data]) => {
+        if (uuid === soundUUID) {
+            return false;
+        }
+
+        return data.eventKey === eventKey;
+    });
+
+    return isUsed;
+}
+
 /** Convert binary data into a string
  * @param {File} file
  */
@@ -44,24 +67,22 @@ const fileToBase64 = (file) => {
 }
 
 /** Update the sound related to a key
- * @param {string} soundUUID    @param {string} oldEventKey
- * @param {string} newEventKey  @param {boolean} EventState
+ * @param {string} soundUUID @param {string} eventKey  @param {boolean} EventState
  */
-const updateSound = async (soundUUID, oldEventKey, newEventKey, eventState = true) => {
-    const storageData = await browser.storage.local.get('custom_sounds_config');
-    const configs = storageData.custom_sounds_config || {};
+const updateSound = async (soundUUID, eventKey, eventState = true) => {
+    const storageData = await getExtensionData();
 
-    configs[newEventKey] = {
-        soundUUID,
-        active: eventState
-    };
-
-    if (oldEventKey && oldEventKey !== newEventKey) {
-        delete configs[oldEventKey];
+    if (!storageData[soundUUID]) {
+        console.error(`Sound with UUID ${soundUUID} not found in storage`);    return;
     }
 
+    const currentState = storageData[soundUUID] ? storageData[soundUUID].active : eventState;
+
+    storageData[soundUUID].eventKey = eventKey;
+    storageData[soundUUID].active = currentState;
+
     await browser.storage.local.set({
-        'custom_sounds_config': configs
+        'custom_sounds_config': storageData
     });
 }
 
@@ -71,27 +92,38 @@ const updateSound = async (soundUUID, oldEventKey, newEventKey, eventState = tru
 const saveSound = async (soundUUID, sound) => {
     const soundURL = await fileToBase64(sound);
 
-    const storageData = await getSoundLibraryState();
-    const currentLibrary = storageData.sounds_library || {};
+    const storageData = await getExtensionData();
 
-    const newLibrary = {
-        ...currentLibrary,
+    const newStoragedata = {
+        ...storageData,
         [soundUUID]: {
             soundURL,
-            name: sound.name
+            name: sound.name,
+            eventKey: null,
+            active: true
         }
     };
 
     await browser.storage.local.set({
-        'sounds_library': newLibrary
+        'custom_sounds_config': newStoragedata
     });
+}
+
+/** @param {string|null} eventKey    @returns {string} */
+const getButtonKeyText = (eventKey) => {
+    if (!eventKey) {
+        return 'Set an action';
+    }
+
+    return eventKey.startsWith('Key') ? eventKey.substring(3) : eventKey;
 }
 
 /** Create a <li> element 
  * @param {string} soundUUID  @param {string} soundName
+ * @param {string} eventKey   @param {boolean} state
  * @returns {HTMLLIElement}
 */
-const createLiElement = (soundUUID, soundName) => {
+const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
     const li = document.createElement('li');
     li.dataset.uuid = soundUUID;
     li.className = 'flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md shrink';
@@ -102,7 +134,7 @@ const createLiElement = (soundUUID, soundName) => {
 
     const buttonChangeKey = document.createElement('button');
     buttonChangeKey.className = 'change-event-key cursor-pointer text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12';
-    buttonChangeKey.textContent = 'Set an action';
+    buttonChangeKey.textContent = getButtonKeyText(eventKey);
 
     const divSwitch = document.createElement('div');
     divSwitch.className = 'relative inline-block w-15 h-5';
@@ -111,6 +143,7 @@ const createLiElement = (soundUUID, soundName) => {
     inputCheck.id = soundUUID;
     inputCheck.type = 'checkbox';
     inputCheck.className = 'event-check peer appearance-none w-15 h-6 bg-violet-950 rounded-full checked:bg-violet-700 cursor-pointer transition-colors duration-300';
+    inputCheck.checked = state;
 
     const labelCheck = document.createElement('label');
     labelCheck.htmlFor = soundUUID;
@@ -136,40 +169,87 @@ const createLiElement = (soundUUID, soundName) => {
 const deleteSound = async (soundToDelete) => {
     const UUIDToDelete = soundToDelete.dataset.uuid;
 
-    const storageData = await getSoundLibraryState();
-    const currentLibrary = storageData.sounds_library || {};
+    const storageData = await getExtensionData();
 
-    delete currentLibrary[UUIDToDelete]
+    delete storageData[UUIDToDelete];
             
-    browser.storage.local.set({
-        'sounds_library': currentLibrary
+    await browser.storage.local.set({
+        'custom_sounds_config': storageData
     });
 
     soundToDelete.remove();
 }
 
+/** @returns {Promise<string>} */
+const waitForKeyPress = () => {
+    return new Promise(resolve => {
+        const keyHandler = (event) => {
+            event.preventDefault(); 
+            
+            resolve(event.code);
+
+            window.removeEventListener('keydown', keyHandler);
+        };
+
+        window.addEventListener('keydown', keyHandler);
+    });
+}
+
+/** @param {HTMLLIElement} soundLiElement */
+const handleKeyChange = async (soundLiElement, button) => {
+    const soundUUID = soundLiElement.dataset.uuid;
+
+    button.textContent = 'Press a key...';
+    button.disabled = true;
+
+    const newEventKey = await waitForKeyPress();
+
+    if (await isKeyAlreadyUsed(newEventKey, soundUUID)) {
+        console.warn(`The key ${newEventKey} is already used`);
+
+        button.textContent = getButtonKeyText();
+        button.disabled = false;
+
+        return;
+    }
+
+    await updateSound(soundUUID, newEventKey);
+
+    button.textContent = getButtonKeyText(newEventKey);
+    button.disabled = false;
+}
+
 
 soundList.addEventListener('click', async (e) => {
     const deleteButton = e.target.closest('.sound-delete');
+    const changeKeyButton = e.target.closest('.change-event-key');
 
     if (deleteButton) {
-        const soundToDelete = deleteButton.closest('li');
-    
-        if (soundToDelete) {
-            await deleteSound(soundToDelete);
+        const soundLiElement = deleteButton.closest('li');
+
+        if (soundLiElement) {
+            await deleteSound(soundLiElement);
+        }
+    }
+
+    if (changeKeyButton) {
+        const soundLiElement = changeKeyButton.closest('li');
+
+        if (soundLiElement) {
+            await handleKeyChange(soundLiElement, changeKeyButton);
         }
     }
 });
 
 saveSoundButton.addEventListener('click', async (e) => {
-    if (uploadSoundButton.files.length == 0) {
-        console.warn('No sound files detected');    return;
+    if (uploadSoundButton.files.length === 0) {
+        console.warn('No sound files detected');   return;
     }
 
     const sound = uploadSoundButton.files[0];
 
     if (await doesSoundExist(sound.name)) {
-        console.warn(`The sound ${sound.name} already exists`);    return;
+        console.warn(`The sound ${sound.name} already exists`);   return;
     }
 
     const soundUUID = generateUUID();
@@ -182,14 +262,13 @@ saveSoundButton.addEventListener('click', async (e) => {
 });
 
 addEventListener('DOMContentLoaded', async (e) => {
-    const storageData = await getSoundLibraryState();
-    const soundsLibrary = storageData.sounds_library || {};
+    const storageData = await getExtensionData();
 
-    Object.entries(soundsLibrary).forEach(([soundUUID, sound]) => {
-        const soundLiElement =  createLiElement(soundUUID, sound.name);
+    Object.entries(storageData).forEach(([soundUUID, data]) => {
+        const soundLiElement =  createLiElement(soundUUID, data.name, data.eventKey, data.active);
 
         soundList.appendChild(soundLiElement);
     });
 });
 
-// TODO: add change-key-event, in this moment i don't remember anymore, have luck tomorrow :D
+// TODO: create the popup for change-key-event, create the popup for alerts and warnings, fix the text-size bug in change-key button, add checkChangeState
