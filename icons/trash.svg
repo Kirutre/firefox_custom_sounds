@@ -1,5 +1,5 @@
-<!-- I created the SVG myself without vector drawing editors (I didn't know you could use them xd). Feel free to use it -->
+<!-- I created the SVG by myself without vector drawing editors (I didn't know you could use them xd). Feel free to use it -->
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16">
-<path d="M5 5v7q0 2 2 2h2q2 0 2-2v-8h1v8q0 3-2 3h-4q-2 0-2-3v-8h1v1M6 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2M9 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2" fill="#dc2626"/>
-<path d="M4 4q-1 0-1-.5 0-.5 1-.5h2q0-2 1-2h2q1 0 1 2h2q1 0 1 .5 0 .5-1 .5h-8M7 3v-1h2v1" fill="#dc2626" fill-rule="evenodd"/>
+    <path d="M5 5v7q0 2 2 2h2q2 0 2-2v-8h1v8q0 3-2 3h-4q-2 0-2-3v-8h1v1M6 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2M9 8q0-1 .5-1 .5 0 .5 1v2q0 1-.5 1-.5 0-.5-1v-2" fill="#dc2626"/>
+    <path d="M4 4q-1 0-1-.5 0-.5 1-.5h2q0-2 1-2h2q1 0 1 2h2q1 0 1 .5 0 .5-1 .5h-8M7 3v-1h2v1" fill="#dc2626" fill-rule="evenodd"/>
 </svg>

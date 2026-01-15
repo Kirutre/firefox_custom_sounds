@@ -1,0 +1,44 @@
+<!--* Don't expect too much from the page; I know very little about design, HTML, and CSS XDD. I did what I could, guided by the Tailwind documentation (which is excellent btw)-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Sounds - Kirutre</title>
+  <link rel="stylesheet" href="output.css">
+  <script src="modal.js" defer></script>
+</head>
+
+<body class="grid place-items-center min-h-screen bg-slate-950">
+  <div id="modal-container" class="w-2xl grid grid-rows-[auto_1fr] gap-4 justify-items-center bg-slate-800 rounded-lg shadow-md shadow-violet-700">
+    <div id="modal-title" class="w-full flex">
+      <h3 class="text-white text-2xl pl-4 pt-4 font-bold">Set an event</h3>
+      <svg class="ml-auto pt-4 size-12.5 cursor-pointer" viewbox="0 0 7 7">
+        <path stroke="dark-gray" stroke-width="0.3" fill="white" d="M1 0l2 2 2-2 1 1-2 2 2 2-1 1-2-2-2 2-1-1 2-2-2-2 1-1"/>
+      </svg>
+    </div>
+    
+    <div id="modal-content" class="w-full">
+      <div id="set-events" class="w-full flex justify-evenly">
+        <div class="inline-block w-30">
+          <button popovertarget="dropdown-menu" id="dropdown-button" class="cursor-pointer inline-flex w-full text-white text-md justify-center items-center gap-x-1.5 bg-gray-600/40 h-8 rounded-2xl hover:bg-gray-600/30 transition">Event list
+            <svg viewbox="0 0 8 8" class="fill-gray-500 size-3 mt-1.5">
+              <path d="M0 0h2l2 3 2-3h2l-4 6-4-6"/>
+            </svg>
+          </button>
+
+          <div popover id="dropdown-menu" class="w-30 text-white bg-gray-600/20 rounded-b-2xl justify-center pb-1">
+            <button class="w-full cursor-pointer">New Tab</button>
+            <button class="w-full cursor-pointer">Close Tab</button>
+          </div>
+        </div>
+
+        <button class="cursor-pointer text-white bg-violet-600 rounded-full hover:bg-violet-700 transition w-30 h-10">Set a Key</button>
+      </div>
+    </div>
+
+    <button class="mt-10 mb-5 cursor-pointer text-white bg-green-900 rounded-full hover:bg-green-900/70 transition w-30 h-11">Save changes</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+<!-- I created the SVG by myself without vector drawing editors (I didn't know you could use them xd). Feel free to use it -->
+<svg xmlns="http://www.w3.org/2000/svg" width="7" height="7">
+    <path stroke="red" stroke-width="0.3" fill="dark" d="M1 0l2 2 2-2 1 1-2 2 2 2-1 1-2-2-2 2-1-1 2-2-2-2 1-1"/>
+</svg>
