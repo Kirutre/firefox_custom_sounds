@@ -1,6 +1,10 @@
 const uploadSoundButton = document.getElementById('upload-sounds');
 const soundList = document.getElementById('sound-list');
 const saveSoundButton = document.getElementById('save-sound');
+const changeEventDialog = document.getElementById('modal-set-event');
+const closeDialogSVG = document.getElementById('close-modal');
+const dropdownEventListButton = document.getElementById('dropdown-button');
+const eventListMenu = document.getElementById('dropdown-menu');
 
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
@@ -132,9 +136,9 @@ const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
     pName.className = 'text-white font-semibold text-xl w-8/12';
     pName.textContent = soundName;
 
-    const buttonChangeKey = document.createElement('button');
-    buttonChangeKey.className = 'change-event-key cursor-pointer text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12';
-    buttonChangeKey.textContent = getButtonKeyText(eventKey);
+    const buttonShowDialog = document.createElement('button');
+    buttonShowDialog.className = 'show-dialog cursor-pointer text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12';
+    buttonShowDialog.textContent = getButtonKeyText(eventKey);
 
     const divSwitch = document.createElement('div');
     divSwitch.className = 'relative inline-block w-15 h-5';
@@ -160,7 +164,7 @@ const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
             <path class="trash-can-lid transition-transform duration-300 origin-[70%_50%] group-hover:-translate-y-0.5 group-hover:rotate-12" d="M4 4q-1 0-1-.5 0-.5 1-.5h2q0-2 1-2h2q1 0 1 2h2q1 0 1 .5 0 .5-1 .5h-8M7 3v-1h2v1" fill-rule="evenodd"/>
         </svg>`;
 
-    li.append(pName, buttonChangeKey, divSwitch, buttonDelete);
+    li.append(pName, buttonShowDialog, divSwitch, buttonDelete);
 
     return li;
 }
@@ -219,10 +223,18 @@ const handleKeyChange = async (soundLiElement, button) => {
     button.disabled = false;
 }
 
+const handleShowDialog = () => {
+    changeEventDialog.showModal();
+}
+
+const handleCloseDialog = () => {
+    changeEventDialog.close();
+}
+
 
 soundList.addEventListener('click', async (e) => {
     const deleteButton = e.target.closest('.sound-delete');
-    const changeKeyButton = e.target.closest('.change-event-key');
+    const showDialogButton = e.target.closest('.show-dialog');
 
     if (deleteButton) {
         const soundLiElement = deleteButton.closest('li');
@@ -232,12 +244,31 @@ soundList.addEventListener('click', async (e) => {
         }
     }
 
-    if (changeKeyButton) {
-        const soundLiElement = changeKeyButton.closest('li');
+    if (showDialogButton) {
+        const soundLiElement = showDialogButton.closest('li');
 
         if (soundLiElement) {
-            await handleKeyChange(soundLiElement, changeKeyButton);
+            handleShowDialog();
         }
+    }
+});
+
+closeDialogSVG.addEventListener('click', handleCloseDialog);
+
+changeEventDialog.addEventListener('click', (e) => {
+    if (e.target === changeEventDialog) {
+        handleCloseDialog();
+    }
+});
+
+eventListMenu.addEventListener('toggle', (e) => {
+    dropdownEventListButton.classList.toggle('rounded-b-none');
+
+    if (e.newState === 'open') {
+        const rect = dropdownEventListButton.getBoundingClientRect();
+        
+        eventListMenu.style.top = `${rect.bottom}px`;
+        eventListMenu.style.left = `${rect.left}px`;
     }
 });
 

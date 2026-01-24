@@ -20,11 +20,11 @@
       <h2 class="text-white font-bold text-3xl">Config Options</h2>
 
       <div class="bg-slate-700 flex items-center p-4 rounded-md shadow-sm shadow-gray-500">
-        <label for="upload-sounds" class="text-white font-semibold text-2xl mr-4">Upload your sounds: </label>
+        <label for="upload-sounds" class="text-white font-semibold text-2xl mr-4">Select your sound: </label>
 
         <input type="file" id="upload-sounds" class="file:mr-4 file:rounded-full file:border-0 file:bg-violet-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-violet-700 text-white mr-25" accept="audio/*">
 
-        <button id="save-sound" class="text-white text-sm bg-violet-600 py-1 rounded-full hover:bg-violet-700 transition w-1/12">Guardar Sonido</button>
+        <button id="save-sound" class="ml-auto text-white text-sm font-semibold bg-violet-600 py-1 rounded-full hover:bg-violet-700 transition w-30 h-9">Upload sound</button>
       </div>
 
       <div class="bg-slate-700 p-4 rounded-md self-start shadow-sm shadow-gray-500">
@@ -38,5 +38,40 @@
       </div>
     </div>
   </div>
+
+  <dialog id="modal-set-event" class="backdrop:bg-slate-950/80 bg-transparent fixed inset-0 m-auto">
+    <div id="modal-container" class="w-2xl grid grid-rows-[auto_1fr] gap-4 justify-items-center bg-slate-800 rounded-lg border-b-2 border-r-2 border-violet-950 p-6">
+      <div id="modal-title" class="w-full flex">
+        <h3 class="text-white text-2xl font-bold">Set an event</h3>
+        <button id="close-modal" class="ml-auto text-gray-400 hover:text-white cursor-pointer">
+          <svg class="size-8" viewbox="0 0 7 7">
+            <path stroke="currentColor" stroke-width="0.5" fill="none" d="M1 1l5 5M1 6l5-5"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="modal-content" class="w-full">
+        <div id="set-events" class="w-full flex justify-evenly">
+          <div class="inline-block w-30">
+            <button popovertarget="dropdown-menu" id="dropdown-button" class="cursor-pointer inline-flex w-full text-white text-md justify-center items-center gap-x-1.5 bg-gray-600/40 h-8 rounded-2xl hover:bg-gray-600/30 transition">Event list
+              <svg class="fill-gray-500 size-3 mt-1.5" viewbox="0 0 8 8">
+                <path d="M0 0h2l2 3 2-3h2l-4 6-4-6"/>
+              </svg>
+            </button>
+
+            <div popover id="dropdown-menu" class="w-30 text-white bg-slate-700 rounded-b-2xl border border-slate-600">
+              <button id="new-tab" class="event-option w-full hover:bg-slate-600">New Tab</button>
+              <button id="close-tab" class="event-option w-full hover:bg-slate-600">Close Tab</button>
+              <button id="none-event" class="event-option w-full hover:bg-slate-600">None</button>
+            </div>
+          </div>
+
+          <button id="set-key" class="cursor-pointer text-white bg-violet-600 rounded-full hover:bg-violet-700 transition w-30 h-9">Set a Key</button>
+        </div>
+      </div>
+
+      <button id="save-modal-changes" class="mt-13 cursor-pointer text-white bg-green-700 rounded-full hover:bg-green-600 transition w-30 h-10">Save changes</button>
+    </div>
+  </dialog>
 </body>
 </html>
