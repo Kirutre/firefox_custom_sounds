@@ -1,3 +1,10 @@
+/** @returns {Promise<Object>} */
+const getExtensionData = async () => {
+    const data = await browser.storage.local.get('custom_sounds_config');
+
+    return data.custom_sounds_config || {};
+}
+
 //* ------ Playback Functions ------
 
 /** Plays a sound
@@ -9,6 +16,9 @@ const playSound = soundURL => {
     }
 
     const audio = new Audio(soundURL);
+    audio.src = soundURL;
+
+    audio.load();
 
     audio.play()
         .then(() => {
@@ -18,6 +28,18 @@ const playSound = soundURL => {
             console.error(`Error playing sound: ${soundURL}, error: ${error}`);
         });
 };
+
+const playSoundByEvent = async (eventName) => {
+    const storageData = await getExtensionData();
+
+    const soundEntry = Object.values(storageData).find(sound =>
+        sound.eventKey === eventName && sound.active === true
+    );
+
+    if (soundEntry && soundEntry.soundURL) {
+        playSound(soundEntry.soundURL);
+    }
+}
 
 
 //* ------ Event Handlers ------
@@ -29,14 +51,7 @@ const playSound = soundURL => {
 const handleTabCreated = async (tab) => {
     console.log(`New tab created: ${tab.id}`);
 
-    const storageData = await browser.storage.local.get('custom_sounds_config');
-    const event = storageData.custom_sounds_config && storageData.custom_sounds_config.created_tab;
-
-    if (event && event.active) {
-        const soundURL = event.base64;
-
-        playSound(soundURL);
-    }
+    await playSoundByEvent('new-tab');
 };
 
 /** Executed when a tab is removed
@@ -48,22 +63,21 @@ const handleTabRemoved = async (tabId, removeInfo) => {
     if (!removeInfo.isWindowClosing) {
         console.log(`Removed tab: ${tabId}`);
 
-        const storageData = await browser.storage.local.get('custom_sounds_config');
-        const event = storageData.custom_sounds_config && storageData.custom_sounds_config.removed_tab;
-
-        if (event && event.active) {
-            const soundURL = event.base64;
-
-            playSound(soundURL);
-        }
+        await playSoundByEvent('close-tab');
     }
 };
 
 
 //* ------ Listeners ------
 
-browser.tabs.onCreated.addListener(handleTabCreated);
-browser.tabs.onRemoved.addListener(handleTabRemoved);
+browser.tabs.onCreated.addListener(async (tab) => await handleTabCreated(tab));
+browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => await handleTabRemoved(tabId, removeInfo));
+
+browser.runtime.onMessage.addListener(async (message) => {
+    if (message.action === 'play_sound') {
+        await playSoundByEvent(message.eventKey);
+    }
+});
 
 browser.action.onClicked.addListener(() => {
     const optionsUrl = browser.runtime.getURL("options/options.html");
