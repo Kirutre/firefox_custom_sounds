@@ -4,7 +4,10 @@ const saveSoundButton = document.getElementById('save-sound');
 const changeEventDialog = document.getElementById('modal-set-event');
 const closeDialogSVG = document.getElementById('close-modal');
 const dropdownEventListButton = document.getElementById('dropdown-button');
+const dropdownEventListButtonText = document.getElementById('dropdown-button-text');
 const eventListMenu = document.getElementById('dropdown-menu');
+const setKeyButton = document.getElementById('set-key');
+const saveDialogChanges = document.getElementById('save-modal-changes');
 
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
@@ -16,6 +19,13 @@ const getExtensionData = async () => {
  /** @param {string} prefix    @returns {string} */
 const generateUUID = (prefix = 'sound-') => {
     return `${prefix}${crypto.randomUUID()}`;
+}
+
+const santizeEventName = (event) => {
+    return event
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
 /** Check if the sound exists in the storage 
@@ -119,7 +129,7 @@ const getButtonKeyText = (eventKey) => {
         return 'Set an action';
     }
 
-    return eventKey.startsWith('Key') ? eventKey.substring(3) : eventKey;
+    return eventKey.startsWith('Key') ? eventKey.substring(3) : santizeEventName(eventKey);
 }
 
 /** Create a <li> element 
@@ -200,9 +210,7 @@ const waitForKeyPress = () => {
 }
 
 /** @param {HTMLLIElement} soundLiElement */
-const handleKeyChange = async (soundLiElement, button) => {
-    const soundUUID = soundLiElement.dataset.uuid;
-
+const handleKeyChange = async (soundUUID, button) => {
     button.textContent = 'Press a key...';
     button.disabled = true;
 
@@ -211,24 +219,82 @@ const handleKeyChange = async (soundLiElement, button) => {
     if (await isKeyAlreadyUsed(newEventKey, soundUUID)) {
         console.warn(`The key ${newEventKey} is already used`);
 
-        button.textContent = getButtonKeyText();
+        button.textContent = 'Set a key';
         button.disabled = false;
 
         return;
     }
 
-    await updateSound(soundUUID, newEventKey);
-
     button.textContent = getButtonKeyText(newEventKey);
     button.disabled = false;
+
+    changeEventDialog.dataset.eventAction = newEventKey;
 }
 
-const handleShowDialog = () => {
+const handleShowDialog = async (soundLiElement) => {
+    const storageData = await getExtensionData();
+    const soundUUID = soundLiElement.dataset.uuid;
+
+    const eventAction = storageData[soundUUID].eventKey;
+
+    dropdownEventListButtonText.textContent = 'Event list';
+    setKeyButton.textContent = 'Set a key';
+    setKeyButton.disabled = false;
+
+    if (eventAction === 'new-tab' || eventAction === 'close-tab') {
+        dropdownEventListButtonText.textContent = getButtonKeyText(eventAction);
+
+        setKeyButton.disabled = true;
+    } else if (eventAction !== null) {
+        setKeyButton.textContent = getButtonKeyText(eventAction);
+    }
+
+    changeEventDialog.dataset.soundUUID = soundUUID;
+
     changeEventDialog.showModal();
 }
 
-const handleCloseDialog = () => {
-    changeEventDialog.close();
+const handleCloseWithAnimation = (element) => {
+    element.classList.add('fade-out-animation');
+
+    element.addEventListener('animationend', () => {
+        element.classList.remove('fade-out-animation');
+
+        element.tagName === 'DIALOG' ? element.close() : element.hidePopover();
+    }, {once: true});
+}
+
+const handleOpenDropdownMenu = (e) => {
+    dropdownEventListButton.classList.toggle('rounded-b-none');
+
+    if (e.newState === 'open') {
+        const rect = dropdownEventListButton.getBoundingClientRect();
+            
+        eventListMenu.style.top = `${rect.bottom}px`;
+        eventListMenu.style.left = `${rect.left}px`;
+    }
+}
+
+const handleSetBrowserEvent = async (event) => {
+    setKeyButton.textContent = 'Set a key';
+
+    const soundUUID = changeEventDialog.dataset.soundUUID;
+    changeEventDialog.dataset.eventAction = event;
+
+    if (event === 'none-event') {
+        setKeyButton.disabled = false;  return;
+    }
+
+    if (await isKeyAlreadyUsed(event, soundUUID)) {
+        console.warn(`The event ${event} is already used`);
+
+        dropdownEventListButtonText.textContent = 'Event list';
+        setKeyButton.disabled = false;
+
+        return;
+    }
+
+    setKeyButton.disabled = true;
 }
 
 
@@ -248,31 +314,58 @@ soundList.addEventListener('click', async (e) => {
         const soundLiElement = showDialogButton.closest('li');
 
         if (soundLiElement) {
-            handleShowDialog();
+            await handleShowDialog(soundLiElement);
         }
     }
 });
 
-closeDialogSVG.addEventListener('click', handleCloseDialog);
+closeDialogSVG.addEventListener('click', () => handleCloseWithAnimation(changeEventDialog));
 
 changeEventDialog.addEventListener('click', (e) => {
     if (e.target === changeEventDialog) {
-        handleCloseDialog();
+        handleCloseWithAnimation(changeEventDialog);
     }
 });
 
-eventListMenu.addEventListener('toggle', (e) => {
-    dropdownEventListButton.classList.toggle('rounded-b-none');
+eventListMenu.addEventListener('toggle', (e) => handleOpenDropdownMenu(e));
 
-    if (e.newState === 'open') {
-        const rect = dropdownEventListButton.getBoundingClientRect();
-        
-        eventListMenu.style.top = `${rect.bottom}px`;
-        eventListMenu.style.left = `${rect.left}px`;
+eventListMenu.addEventListener('click', async (e) => {
+    const eventButton = e.target.closest('.event-option');
+
+    if (eventButton) {
+        const event = eventButton.dataset.browserEvent;
+
+        dropdownEventListButtonText.textContent = eventButton.textContent;
+
+        await handleSetBrowserEvent(event);
+
+        handleCloseWithAnimation(eventListMenu);
     }
 });
 
-saveSoundButton.addEventListener('click', async (e) => {
+setKeyButton.addEventListener('click', async () => {
+    const soundUUID = changeEventDialog.dataset.soundUUID;
+
+    await handleKeyChange(soundUUID, setKeyButton);
+});
+
+saveDialogChanges.addEventListener('click', async () => {
+    const soundUUID = changeEventDialog.dataset.soundUUID;
+    let eventAction = changeEventDialog.dataset.eventAction;
+
+    if (eventAction === 'none-event') {
+        eventAction = null;
+    }
+
+    await updateSound(soundUUID, eventAction);
+
+    const buttonShowDialog = document.querySelector(`[data-uuid=${soundUUID}] .show-dialog`);
+    buttonShowDialog.textContent = getButtonKeyText(eventAction);
+
+    handleCloseWithAnimation(changeEventDialog);
+});
+
+saveSoundButton.addEventListener('click', async () => {
     if (uploadSoundButton.files.length === 0) {
         console.warn('No sound files detected');   return;
     }
@@ -292,7 +385,7 @@ saveSoundButton.addEventListener('click', async (e) => {
     soundList.appendChild(soundLiElement);
 });
 
-addEventListener('DOMContentLoaded', async (e) => {
+addEventListener('DOMContentLoaded', async () => {
     const storageData = await getExtensionData();
 
     Object.entries(storageData).forEach(([soundUUID, data]) => {
@@ -302,4 +395,4 @@ addEventListener('DOMContentLoaded', async (e) => {
     });
 });
 
-// TODO: create the popup for change-key-event, create the popup for alerts and warnings, fix the text-size bug in change-key button, add checkChangeState
+// TODO: create the popup for alerts and warnings, add checkChangeState

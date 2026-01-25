@@ -5,8 +5,7 @@
  */
 const playSound = soundURL => {
     if (!soundURL) {
-        console.error('URL not provided');
-        return;
+        console.error('Sound URL not provided');    return;
     }
 
     const audio = new Audio(soundURL);
