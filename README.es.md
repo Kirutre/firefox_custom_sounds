@@ -83,7 +83,7 @@ Link del proyecto: https://github.com/Kirutre/firefox_custom_sounds
 ## 🖼️ Imagenes
 
 ### Pagina de Configuraciones
-![Pagina de opciones](/web-sounds/example_images/options_page.png "Pagina de configuraciones")
+![Pagina de opciones](/example_images/options_page.png "Pagina de configuraciones")
 
 ### Modal para personalizar los Eventos
-![Modal](/web-sounds/example_images/modal.png "Modal de eventos")
+![Modal](/example_images/modal.png "Modal de eventos")
