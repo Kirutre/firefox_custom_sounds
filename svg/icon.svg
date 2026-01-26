@@ -1,0 +1,21 @@
+<!-- I created the SVG by myself without vector drawing editors (I didn't know you could use them xd). Feel free to use it -->
+<svg viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="gradienteLogo" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFB347" /> <stop offset="50%" stop-color="#F24E5E" />
+            <stop offset="100%" stop-color="#702283" />
+        </linearGradient>
+    </defs>
+
+    <g fill="none" stroke="url(#gradienteLogo)" stroke-width="18" stroke-linecap="round">
+        <line x1="40" y1="135" x2="40.01" y2="165" />
+        <line x1="75" y1="125" x2="75.01" y2="175" />
+        <line x1="110" y1="110" x2="110.01" y2="190" />
+        <line x1="145" y1="125" x2="145.01" y2="175" />
+
+        <path d="M 145,90 A 65,65 0 0 1 145,210" />
+        <path d="M 175,70 A 90,90 0 0 1 175,230" />
+        <path d="M 205,50 A 115,115 0 0 1 205,250" />
+        <path d="M 235,30 A 140,140 0 0 1 235,270" />
+    </g>
+</svg>

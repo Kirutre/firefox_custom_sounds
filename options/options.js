@@ -1,13 +1,13 @@
 const uploadSoundButton = document.getElementById('upload-sounds');
-const soundList = document.getElementById('sound-list');
 const saveSoundButton = document.getElementById('save-sound');
+const soundList = document.getElementById('sound-list');
 const changeEventDialog = document.getElementById('modal-set-event');
 const closeDialogSVG = document.getElementById('close-modal');
+const saveDialogChanges = document.getElementById('save-modal-changes');
 const dropdownEventListButton = document.getElementById('dropdown-button');
 const dropdownEventListButtonText = document.getElementById('dropdown-button-text');
 const eventListMenu = document.getElementById('dropdown-menu');
 const setKeyButton = document.getElementById('set-key');
-const saveDialogChanges = document.getElementById('save-modal-changes');
 
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
@@ -16,59 +16,16 @@ const getExtensionData = async () => {
     return data.custom_sounds_config || {};
 }
 
- /** @param {string} prefix    @returns {string} */
+ /** @param {string} prefix     @returns {string} */
 const generateUUID = (prefix = 'sound-') => {
     return `${prefix}${crypto.randomUUID()}`;
 }
 
-const santizeEventName = (event) => {
-    return event
-        .split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' ');
-}
-
-/** Check if the sound exists in the storage 
- * @param {string} soundName
- * @returns {Promise<boolean>}
- */
-const doesSoundExist = async (soundName) => {
-    const storageData = await getExtensionData();
-
-    console.log(storageData);
-
-    const sounds = Object.values(storageData);
-
-    const exists = sounds.some(sound => sound.name === soundName);
-
-    console.log(exists);
-
-    return exists;
-}
-
-/** Check if a event key is already used
- * @param {string} eventKey  @param {string} soundUUID
- * @returns {Promise<boolean>}
- */
-const isKeyAlreadyUsed = async (eventKey, soundUUID) => {
-    const storageData = await getExtensionData();
-    const sounds = Object.entries(storageData);
-
-    const isUsed = sounds.some(([uuid, data]) => {
-        if (uuid === soundUUID) {
-            return false;
-        }
-
-        return data.eventKey === eventKey;
-    });
-
-    return isUsed;
-}
-
-/** Convert binary data into a string
+/** Convert binary data into string
  * @param {File} file
+ * @returns {Promise<string>}
  */
-const fileToBase64 = (file) => {
+const fileToBase64 = async (file) => {
   return new Promise((resolve, reject) => { 
     const reader = new FileReader();
     
@@ -80,59 +37,51 @@ const fileToBase64 = (file) => {
   });
 }
 
-/** Update the sound related to a key
- * @param {string} soundUUID @param {string} eventKey  @param {boolean} EventState
- */
-const updateSound = async (soundUUID, eventKey, eventState = true) => {
-    const storageData = await getExtensionData();
-
-    if (!storageData[soundUUID]) {
-        console.error(`Sound with UUID ${soundUUID} not found in storage`);    return;
-    }
-
-    const currentState = storageData[soundUUID] ? storageData[soundUUID].active : eventState;
-
-    storageData[soundUUID].eventKey = eventKey;
-    storageData[soundUUID].active = currentState;
-
-    await browser.storage.local.set({
-        'custom_sounds_config': storageData
-    });
+/** @param {string} event   @returns {string} */
+const santizeEventName = (event) => {
+    return event
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
-/** Save a sound in the storage
- * @param {string} soundUUID  @param {File} sound
- */
-const saveSound = async (soundUUID, sound) => {
-    const soundURL = await fileToBase64(sound);
-
-    const storageData = await getExtensionData();
-
-    const newStoragedata = {
-        ...storageData,
-        [soundUUID]: {
-            soundURL,
-            name: sound.name,
-            eventKey: null,
-            active: true
-        }
-    };
-
-    await browser.storage.local.set({
-        'custom_sounds_config': newStoragedata
-    });
-}
-
-/** @param {string|null} eventKey    @returns {string} */
-const getButtonKeyText = (eventKey) => {
-    if (!eventKey) {
+/** @param {string|null} eventAction    @returns {string} */
+const getButtonText = (eventAction) => {
+    if (!eventAction) {
         return 'Set an action';
     }
 
-    return eventKey.startsWith('Key') ? eventKey.substring(3) : santizeEventName(eventKey);
+    return eventAction.startsWith('Key') ? eventAction.substring(3) : santizeEventName(eventAction);
 }
 
-/** Create a <li> element 
+/** @param {string} soundName   @returns {Promise<boolean>} */
+const doesSoundExist = async (soundName) => {
+    const storageData = await getExtensionData();
+
+    const sounds = Object.values(storageData);
+
+    const exists = sounds.some(sound => sound.name === soundName);
+
+    return exists;
+}
+
+/** @param {string} eventAction  @param {string} soundUUID     @returns {Promise<boolean>} */
+const isEventAlreadyUsed = async (eventAction, soundUUID) => {
+    const storageData = await getExtensionData();
+    const sounds = Object.entries(storageData);
+
+    const isUsed = sounds.some(([uuid, data]) => {
+        if (uuid === soundUUID) {
+            return false;
+        }
+
+        return data.eventKey === eventAction;
+    });
+
+    return isUsed;
+}
+
+/** 
  * @param {string} soundUUID  @param {string} soundName
  * @param {string} eventKey   @param {boolean} state
  * @returns {HTMLLIElement}
@@ -148,7 +97,7 @@ const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
 
     const buttonShowDialog = document.createElement('button');
     buttonShowDialog.className = 'show-dialog cursor-pointer text-white text-sm bg-violet-600 px-3 py-1 rounded-full hover:bg-violet-700 transition w-1/12';
-    buttonShowDialog.textContent = getButtonKeyText(eventKey);
+    buttonShowDialog.textContent = getButtonText(eventKey);
 
     const divSwitch = document.createElement('div');
     divSwitch.className = 'relative inline-block w-15 h-5';
@@ -179,6 +128,49 @@ const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
     return li;
 }
 
+
+/** @param {string} soundUUID  @param {File} sound */
+const saveSound = async (soundUUID, sound) => {
+    const soundURL = await fileToBase64(sound);
+
+    const storageData = await getExtensionData();
+
+    const newStoragedata = {
+        ...storageData,
+        [soundUUID]: {
+            soundURL,
+            name: sound.name,
+            eventKey: null,
+            active: true
+        }
+    };
+
+    await browser.storage.local.set({
+        'custom_sounds_config': newStoragedata
+    });
+}
+
+/** @param {string} soundUUID  @param {string} eventAction  @param {boolean} eventState */
+const updateSound = async (soundUUID, eventAction, eventState = true) => {
+    const storageData = await getExtensionData();
+
+    if (!storageData[soundUUID]) {
+        console.error(`Sound with UUID ${soundUUID} not found in storage`);    return;
+    }
+
+    if (eventAction !== undefined) {
+        storageData[soundUUID].eventKey = eventAction;
+    }
+
+    if (eventState !== undefined) {
+        storageData[soundUUID].active = eventState;
+    }
+
+    await browser.storage.local.set({
+        'custom_sounds_config': storageData
+    });
+}
+
 /** @param {HTMLLIElement} soundToDelete */
 const deleteSound = async (soundToDelete) => {
     const UUIDToDelete = soundToDelete.dataset.uuid;
@@ -195,7 +187,7 @@ const deleteSound = async (soundToDelete) => {
 }
 
 /** @returns {Promise<string>} */
-const waitForKeyPress = () => {
+const waitForKeyPress = async () => {
     return new Promise(resolve => {
         const keyHandler = (event) => {
             event.preventDefault(); 
@@ -209,14 +201,15 @@ const waitForKeyPress = () => {
     });
 }
 
-/** @param {HTMLLIElement} soundLiElement */
+
+/** @param {string} soundUUID  @param {HTMLButtonElement} button */
 const handleKeyChange = async (soundUUID, button) => {
     button.textContent = 'Press a key...';
     button.disabled = true;
 
     const newEventKey = await waitForKeyPress();
 
-    if (await isKeyAlreadyUsed(newEventKey, soundUUID)) {
+    if (await isEventAlreadyUsed(newEventKey, soundUUID)) {
         console.warn(`The key ${newEventKey} is already used`);
 
         button.textContent = 'Set a key';
@@ -225,56 +218,13 @@ const handleKeyChange = async (soundUUID, button) => {
         return;
     }
 
-    button.textContent = getButtonKeyText(newEventKey);
+    button.textContent = getButtonText(newEventKey);
     button.disabled = false;
 
     changeEventDialog.dataset.eventAction = newEventKey;
 }
 
-const handleShowDialog = async (soundLiElement) => {
-    const storageData = await getExtensionData();
-    const soundUUID = soundLiElement.dataset.uuid;
-
-    const eventAction = storageData[soundUUID].eventKey;
-
-    dropdownEventListButtonText.textContent = 'Event list';
-    setKeyButton.textContent = 'Set a key';
-    setKeyButton.disabled = false;
-
-    if (eventAction === 'new-tab' || eventAction === 'close-tab') {
-        dropdownEventListButtonText.textContent = getButtonKeyText(eventAction);
-
-        setKeyButton.disabled = true;
-    } else if (eventAction !== null) {
-        setKeyButton.textContent = getButtonKeyText(eventAction);
-    }
-
-    changeEventDialog.dataset.soundUUID = soundUUID;
-
-    changeEventDialog.showModal();
-}
-
-const handleCloseWithAnimation = (element) => {
-    element.classList.add('fade-out-animation');
-
-    element.addEventListener('animationend', () => {
-        element.classList.remove('fade-out-animation');
-
-        element.tagName === 'DIALOG' ? element.close() : element.hidePopover();
-    }, {once: true});
-}
-
-const handleOpenDropdownMenu = (e) => {
-    dropdownEventListButton.classList.toggle('rounded-b-none');
-
-    if (e.newState === 'open') {
-        const rect = dropdownEventListButton.getBoundingClientRect();
-            
-        eventListMenu.style.top = `${rect.bottom}px`;
-        eventListMenu.style.left = `${rect.left}px`;
-    }
-}
-
+/** @param {string} event */
 const handleSetBrowserEvent = async (event) => {
     setKeyButton.textContent = 'Set a key';
 
@@ -285,7 +235,7 @@ const handleSetBrowserEvent = async (event) => {
         setKeyButton.disabled = false;  return;
     }
 
-    if (await isKeyAlreadyUsed(event, soundUUID)) {
+    if (await isEventAlreadyUsed(event, soundUUID)) {
         console.warn(`The event ${event} is already used`);
 
         dropdownEventListButtonText.textContent = 'Event list';
@@ -297,10 +247,77 @@ const handleSetBrowserEvent = async (event) => {
     setKeyButton.disabled = true;
 }
 
+/** @param {string} soundUUID */
+const handleShowDialog = async (soundUUID) => {
+    const storageData = await getExtensionData();
+
+    const eventAction = storageData[soundUUID].eventKey;
+
+    dropdownEventListButtonText.textContent = 'Event list';
+    setKeyButton.textContent = 'Set a key';
+    setKeyButton.disabled = false;
+
+    if (eventAction === 'new-tab' || eventAction === 'close-tab') {
+        dropdownEventListButtonText.textContent = getButtonText(eventAction);
+
+        setKeyButton.disabled = true;
+    } else if (eventAction !== null) {
+        setKeyButton.textContent = getButtonText(eventAction);
+    }
+
+    changeEventDialog.dataset.soundUUID = soundUUID;
+
+    changeEventDialog.showModal();
+}
+
+/** @param {ToggleEvent} e */
+const handleOpenDropdownMenu = (e) => {
+    dropdownEventListButton.classList.toggle('rounded-b-none');
+
+    if (e.newState === 'open') {
+        const rect = dropdownEventListButton.getBoundingClientRect();
+            
+        eventListMenu.style.top = `${rect.bottom}px`;
+        eventListMenu.style.left = `${rect.left}px`;
+    }
+}
+
+/** @param {HTMLDialogElement | HTMLDivElement} element */
+const handleCloseWithAnimation = (element) => {
+    element.classList.add('fade-out-animation');
+
+    element.addEventListener('animationend', () => {
+        element.classList.remove('fade-out-animation');
+
+        element.tagName === 'DIALOG' ? element.close() : element.hidePopover();
+    }, {once: true});
+}
+
+
+saveSoundButton.addEventListener('click', async () => {
+    if (uploadSoundButton.files.length === 0) {
+        console.warn('No sound files detected');   return;
+    }
+
+    const sound = uploadSoundButton.files[0];
+
+    if (await doesSoundExist(sound.name)) {
+        console.warn(`The sound ${sound.name} already exists`);   return;
+    }
+
+    const soundUUID = generateUUID();
+    
+    await saveSound(soundUUID, sound);
+
+    const soundLiElement = createLiElement(soundUUID, sound.name);
+
+    soundList.appendChild(soundLiElement);
+});
 
 soundList.addEventListener('click', async (e) => {
     const deleteButton = e.target.closest('.sound-delete');
     const showDialogButton = e.target.closest('.show-dialog');
+    const changeStateButton = e.target.closest('.event-check');
 
     if (deleteButton) {
         const soundLiElement = deleteButton.closest('li');
@@ -314,16 +331,16 @@ soundList.addEventListener('click', async (e) => {
         const soundLiElement = showDialogButton.closest('li');
 
         if (soundLiElement) {
-            await handleShowDialog(soundLiElement);
+            await handleShowDialog(soundLiElement.dataset.uuid);
         }
     }
-});
 
-closeDialogSVG.addEventListener('click', () => handleCloseWithAnimation(changeEventDialog));
+    if (changeStateButton) {
+        const soundLiElement = changeStateButton.closest('li');
 
-changeEventDialog.addEventListener('click', (e) => {
-    if (e.target === changeEventDialog) {
-        handleCloseWithAnimation(changeEventDialog);
+        if (soundLiElement) {
+            await updateSound(soundLiElement.dataset.uuid, undefined, changeStateButton.checked);
+        }
     }
 });
 
@@ -357,33 +374,22 @@ saveDialogChanges.addEventListener('click', async () => {
         eventAction = null;
     }
 
-    await updateSound(soundUUID, eventAction);
+    await updateSound(soundUUID, eventAction, undefined);
 
     const buttonShowDialog = document.querySelector(`[data-uuid=${soundUUID}] .show-dialog`);
-    buttonShowDialog.textContent = getButtonKeyText(eventAction);
+    buttonShowDialog.textContent = getButtonText(eventAction);
 
     handleCloseWithAnimation(changeEventDialog);
 });
 
-saveSoundButton.addEventListener('click', async () => {
-    if (uploadSoundButton.files.length === 0) {
-        console.warn('No sound files detected');   return;
+closeDialogSVG.addEventListener('click', () => handleCloseWithAnimation(changeEventDialog));
+
+changeEventDialog.addEventListener('click', (e) => {
+    if (e.target === changeEventDialog) {
+        handleCloseWithAnimation(changeEventDialog);
     }
-
-    const sound = uploadSoundButton.files[0];
-
-    if (await doesSoundExist(sound.name)) {
-        console.warn(`The sound ${sound.name} already exists`);   return;
-    }
-
-    const soundUUID = generateUUID();
-    
-    await saveSound(soundUUID, sound);
-
-    const soundLiElement = createLiElement(soundUUID, sound.name);
-
-    soundList.appendChild(soundLiElement);
 });
+
 
 addEventListener('DOMContentLoaded', async () => {
     const storageData = await getExtensionData();
@@ -395,4 +401,4 @@ addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// TODO: create the popup for alerts and warnings, add checkChangeState
+// TODO: create the popup for alerts and warnings

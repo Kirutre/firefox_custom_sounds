@@ -5,11 +5,8 @@ const getExtensionData = async () => {
     return data.custom_sounds_config || {};
 }
 
-//* ------ Playback Functions ------
 
-/** Plays a sound
- * @param {string} soundURL
- */
+/** @param {string} soundURL */
 const playSound = soundURL => {
     if (!soundURL) {
         console.error('Sound URL not provided');    return;
@@ -29,6 +26,7 @@ const playSound = soundURL => {
         });
 };
 
+/** @param {string} eventName */
 const playSoundByEvent = async (eventName) => {
     const storageData = await getExtensionData();
 
@@ -42,9 +40,7 @@ const playSoundByEvent = async (eventName) => {
 }
 
 
-//* ------ Event Handlers ------
-
-/** Executed when a tab is created
+/** 
  * * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onCreated
  * @param {tabs.Tab} tab
  */
@@ -54,7 +50,7 @@ const handleTabCreated = async (tab) => {
     await playSoundByEvent('new-tab');
 };
 
-/** Executed when a tab is removed
+/**
  * * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/tabs/onRemoved
  * @param {integer} tabId
  * @param {object} removeInfo Includes windowId {integer} and isWindowClosing {boolean}
@@ -68,8 +64,6 @@ const handleTabRemoved = async (tabId, removeInfo) => {
 };
 
 
-//* ------ Listeners ------
-
 browser.tabs.onCreated.addListener(async (tab) => await handleTabCreated(tab));
 browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => await handleTabRemoved(tabId, removeInfo));
 
@@ -79,6 +73,7 @@ browser.runtime.onMessage.addListener(async (message) => {
     }
 });
 
+//* Open the options page
 browser.action.onClicked.addListener(() => {
     const optionsUrl = browser.runtime.getURL("options/options.html");
 
