@@ -64,7 +64,7 @@ Contributions are what make software better, and I’m excited to see what you h
 
 1. **Fork** the proyect.
 
-2. Create a **Rama** for your development (`git checkout -b feature/destroy-this-extension`).
+2. Create a **Branch** for your development (`git checkout -b feature/destroy-this-extension`).
 
 3. **Commit** your changes (`git commit -m 'change 1px bug in setKeyButton radius'`).
 
