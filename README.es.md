@@ -11,6 +11,16 @@
 
 ---
 
+## 🖼️ Imagenes
+
+### Pagina de Configuraciones
+![Pagina de opciones](/example_images/options_page.png "Pagina de configuraciones")
+
+### Modal para personalizar los Eventos
+![Modal](/example_images/modal.png "Modal de eventos")
+
+---
+
 ## ✨ Características
 
 - 🔊 **Sonidos Personalizables:** actualmente, puedes asignar sonidos a:
@@ -79,11 +89,3 @@ Kirutre - [GitHub](https://github.com/kirutre)
 Kirutre - contact.kirutre+firefox@gmail.com
 
 Link del proyecto: https://github.com/Kirutre/firefox_custom_sounds
-
-## 🖼️ Imagenes
-
-### Pagina de Configuraciones
-![Pagina de opciones](/example_images/options_page.png "Pagina de configuraciones")
-
-### Modal para personalizar los Eventos
-![Modal](/example_images/modal.png "Modal de eventos")
