@@ -4,7 +4,6 @@
 [![Firefox](https://img.shields.io/badge/Firefox-Add--on-orange.svg)](https://addons.mozilla.org/firefox/)
 
 ### Available languages
-
 [![Language: English](https://img.shields.io/badge/Language-English-blue.svg)](README.md) [![Idioma: Español](https://img.shields.io/badge/Idioma-Español-red.svg)](README.es.md)
 
 **Firefox Custom Sounds** is an extension designed to personalize your web browsing experience by adding sound effects to different actions within the Firefox browser.
@@ -12,7 +11,6 @@
 ---
 
 ## 🖼️ Images
-
 ### Settings Page
 ![Pagina de opciones](/example_images/options_page.png "Settings page")
 
@@ -22,15 +20,15 @@
 ---
 
 ## ✨ Features
-
 - 🔊 **Custom Sounds:** currently, you can assign sounds to:
     * ➕ Open/Close tabs.
     * ⌨️ Keystrokes.
+
 - 🛠️ **Simple Configuration:** intuitive interface to manage your audio files.
+
 - 🚀 **Lightweight:** optimized to not affect browser performance.
 
 ## 💻 Technologies Used
-
 * JavaScript (WebExtensionAPI): for background logic and browser events.
 
 * HTML: for the options page.
@@ -48,18 +46,17 @@
 If you want to modify the extension or contribute to the code, follow these steps to set up your local environment.
 
 1. **Clone this repository**
-   ```bash
-   git clone https://github.com/Kirutre/firefox_custom_sounds.git
+    ```bash
+    git clone https://github.com/Kirutre/firefox_custom_sounds.git
 
-   cd firefox_custom_sounds
-   ```
+    cd firefox_custom_sounds
+    ```
 
 2. **Styles Management (Tailwind CSS)**
 
     This extension uses Tailwind CSS for the interface. The output.css file is already included in the repository so the extension works immediately, but if you make design changes, you will need to recompile it.
 
     #### Recompile `output.css`
-
     1. Download the CLI executable for your operating system from [Tailwind CSS Releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.1.18).
 
     2. Place the executable in the project root and rename it to `tailwindcss-cli`.
@@ -87,7 +84,6 @@ If you want to modify the extension or contribute to the code, follow these step
     4. Select the `manifest.json` file inside the project folder.
 
 ## 🤝 Contributing
-
 Contributions are what make software better, and I’m excited to see what you have to offer!
 
 1. **Fork** the proyect.
@@ -104,11 +100,9 @@ Contributions are what make software better, and I’m excited to see what you h
 > Jokes aside, please be as descriptive as possible with the names you use.
 
 ## 📝 License
-
 Distributed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
 ## 📬 Contact
-
 Kirutre - [GitHub](https://github.com/kirutre)
 
 Kirutre - contact.kirutre+firefox@gmail.com

@@ -4,7 +4,6 @@
 [![Firefox](https://img.shields.io/badge/Firefox-Add--on-orange.svg)](https://addons.mozilla.org/firefox/)
 
 ### Idiomas disponibles
-
 [![Language: English](https://img.shields.io/badge/Language-English-blue.svg)](README.md) [![Idioma: Español](https://img.shields.io/badge/Idioma-Español-red.svg)](README.es.md)
 
 **Firefox Custom Sounds** es una extensión diseñada para personalizar la experiencia al navegar por internet añadiendo efectos de sonido a diferentes acciones dentro del navegador Firefox.
@@ -12,7 +11,6 @@
 ---
 
 ## 🖼️ Imagenes
-
 ### Pagina de Configuraciones
 ![Pagina de opciones](/example_images/options_page.png "Pagina de configuraciones")
 
@@ -22,7 +20,6 @@
 ---
 
 ## ✨ Características
-
 - 🔊 **Sonidos Personalizables:** actualmente, puedes asignar sonidos a:
    * ➕ Abrir/Cerrar pestañas.
    * ⌨️ Pulsaciones de teclas.
@@ -32,7 +29,6 @@
 - 🚀 **Ligero:** optimizado para no afectar el rendimiento del navegador.
 
 ## 💻 Tecnologías utilizadas
-
 * JavaScript (WebExtensionAPI): para la lógica de fondo y eventos del navegador.
 
 * HTML: para la página de opciones.
@@ -44,14 +40,10 @@
 ## ⬇️ Instalación
 
 ### Para Usuarios
-
 *Próximamente disponible en Firefox Add-ons (AMO).* Por ahora, puedes instalarlo manualmente descargando el Release o siguiendo los pasos de desarrollo.
 
 ### Guia para Desarrolladores (Instalación Manual)
-
 Si deseas modificar la extensión o contribuir al código, sigue estos pasos para configurar tu entorno local.
-
-
 
 1. **Clona este repositorio**
    ```bash
@@ -75,7 +67,7 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
    ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch
    ```
 
-   > [!TIP] 
+   > [!TIP]
    > Si tienes `Node.js` instalado, puedes evitar descargar el binario manualmente usando:
 
    ```bash
@@ -92,7 +84,6 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
    4. Selecciona el archivo `manifest.json` que se encuentra en la raiz del proyecto.
 
 ## 🤝 Contribuir
-
 ¡Las contribuciones son lo que hacen mejorar al software, y estoy encantado de ver que puedes ofrecer!
 
 1. Haz un **Fork** del proyecto.
@@ -109,11 +100,9 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
 > Omitiendo la comedia, se lo más descriptivo posible con los nombres que uses.
 
 ## 📝 Licencia
-
 Distribuido bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más información.
 
 ## 📬 Contacto
-
 Kirutre - [GitHub](https://github.com/kirutre)
 
 Kirutre - contact.kirutre+firefox@gmail.com
