@@ -67,8 +67,8 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
    ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch
    ```
 
-   > [!TIP]
-   > Si tienes `Node.js` instalado, puedes evitar descargar el binario manualmente usando:
+> [!TIP]
+> Si tienes `Node.js` instalado, puedes evitar descargar el binario manualmente usando:
 
    ```bash
    npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch
