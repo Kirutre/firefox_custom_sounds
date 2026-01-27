@@ -1,5 +1,5 @@
 <!-- I created the SVG by myself without vector drawing editors (I didn't know you could use them xd). Feel free to use it -->
-<svg viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <linearGradient id="gradienteLogo" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#FFB347" /> <stop offset="50%" stop-color="#F24E5E" />

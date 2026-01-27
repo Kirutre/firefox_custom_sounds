@@ -8,7 +8,10 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "custom_sounds@kirutre"
+      "id": "custom_sounds@kirutre",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
 
