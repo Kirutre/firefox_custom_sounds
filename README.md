@@ -27,36 +27,64 @@
     * ➕ Open/Close tabs.
     * ⌨️ Keystrokes.
 - 🛠️ **Simple Configuration:** intuitive interface to manage your audio files.
-- 🚀 **Lightweight:** optimized to ensure browser performance is not affected.
-
-## ⬇️ Installation
-
-### For Users
-*Coming soon to Firefox Add-ons (AMO).* For now, you can install it manually by following the development steps.
-
-### For Developers (Manual Installation)
-If you want to test the extension or contribute to the code:
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/Kirutre/firefox_custom_sounds.git
-   ```
-
-2. Open Firefox and type `about:debugging` in the address bar.
-
-3. Click on "This Firefox".
-
-4. Click on "Load Temporary Add-on...".
-
-5. Select the `manifest.json` file inside the project folder.
+- 🚀 **Lightweight:** optimized to not affect browser performance.
 
 ## 💻 Technologies Used
 
 * JavaScript (WebExtensionAPI): for background logic and browser events.
 
-* HTML/CSS: for the options page.
+* HTML: for the options page.
+
+* CSS (Tailwind CSS): for the UI design.
 
 * Firefox Browser API: for tab management and event handling.
+
+## ⬇️ Installation
+
+### For Users
+*Coming soon to Firefox Add-ons (AMO).* For now, you can install it manually by downloading the Release or following the development steps.
+
+### Developer Guide (Manual Installation)
+If you want to modify the extension or contribute to the code, follow these steps to set up your local environment.
+
+1. **Clone this repository**
+   ```bash
+   git clone https://github.com/Kirutre/firefox_custom_sounds.git
+
+   cd firefox_custom_sounds
+   ```
+
+2. **Styles Management (Tailwind CSS)**
+
+    This extension uses Tailwind CSS for the interface. The output.css file is already included in the repository so the extension works immediately, but if you make design changes, you will need to recompile it.
+
+    #### Recompile `output.css`
+
+    1. Download the CLI executable for your operating system from [Tailwind CSS Releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.1.18).
+
+    2. Place the executable in the project root and rename it to `tailwindcss-cli`.
+
+    3. Run the following command to compile and watch changes in real-time.
+
+    ```bash
+    ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch
+    ```
+
+    > [!TIP]
+    > If you have Node.js installed, you can avoid downloading the binary manually by using:
+
+    ```bash
+    npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch
+    ```
+
+3. **Load in Firefox for testing**
+    1. Open Firefox and type `about:debugging` in the address bar.
+
+    2. Click on "This Firefox".
+
+    3. Click on "Load Temporary Add-on...".
+
+    4. Select the `manifest.json` file inside the project folder.
 
 ## 🤝 Contributing
 
@@ -72,7 +100,8 @@ Contributions are what make software better, and I’m excited to see what you h
 
 5. Open a **Pull Request**.
 
-_**Note**: comedy aside, please be as descriptive as possible with the names you use._
+> [!NOTE]
+> Jokes aside, please be as descriptive as possible with the names you use.
 
 ## 📝 License
 

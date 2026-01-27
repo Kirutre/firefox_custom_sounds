@@ -31,36 +31,65 @@
 
 - 🚀 **Ligero:** optimizado para no afectar el rendimiento del navegador.
 
-## ⬇️ Instalación
-
-### Para Usuarios
-
-*Próximamente disponible en Firefox Add-ons (AMO).* Por ahora, puedes instalarlo manualmente siguiendo los pasos de desarrollo.
-
-### Para Desarrolladores (Instalación Manual)
-
-Si quieres probar la extensión o contribuir al código:
-
-1. Clona este repositorio:
-   ```bash
-   git clone https://github.com/Kirutre/firefox_custom_sounds.git
-   ```
-
-2. Abre Firefox y escribe `about:debugging` en la barra de direcciones.
-
-3. Haz click en "Este Firefox".
-
-4. Haz click en "Cargar complemento temporal".
-
-5. Selecciona el archivo `manifest.json` dentro de la carpeta del proyecto.
-
 ## 💻 Tecnologías utilizadas
 
 * JavaScript (WebExtensionAPI): para la lógica de fondo y eventos del navegador.
 
-* HTML/CSS: para la página de opciones.
+* HTML: para la página de opciones.
+
+* CSS (Tailwind CSS): para el diseño de la interfaz.
 
 * Firefox Browser API: para el manejo de pestañas y eventos.
+
+## ⬇️ Instalación
+
+### Para Usuarios
+
+*Próximamente disponible en Firefox Add-ons (AMO).* Por ahora, puedes instalarlo manualmente descargando el Release o siguiendo los pasos de desarrollo.
+
+### Guia para Desarrolladores (Instalación Manual)
+
+Si deseas modificar la extensión o contribuir al código, sigue estos pasos para configurar tu entorno local.
+
+
+
+1. **Clona este repositorio**
+   ```bash
+   git clone https://github.com/Kirutre/firefox_custom_sounds.git
+
+   cd firefox_custom_sounds
+   ```
+
+2. **Gestion de Estilos (Tailwind CSS)**
+
+   Esta extensión utiliza Tailwind CSS para la interfaz. El archivo `output.css` ya viene incluido en el repositorio para que la extensión funcione inmediatamente, pero si realizas cambios en el diseño, deberás recompilarlo.
+
+   #### Recompilar `output.css`
+   1. Descarga el ejecutable de la CLI según tu sistema operativo desde [Tailwind CSS Releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.1.18).
+
+   2. Coloca el ejecutable en la raiz del proyecto y renombralo a `tailwindcss-cli`.
+
+   3. Ejecuta el siguiente comando para compilar y observar cambios en tiempo real.
+
+   ```bash
+   ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch
+   ```
+
+   > [!TIP] 
+   > Si tienes `Node.js` instalado, puedes evitar descargar el binario manualmente usando:
+
+   ```bash
+   npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch
+   ```
+
+3. **Cargar en Firefox para pruebas**
+   1. Abre Firefox y escribe `about:debugging` en la barra de direcciones.
+
+   2. Haz clic en "Este Firefox".
+
+   3. Haz click en "Cargar complemento temporal...".
+
+   4. Selecciona el archivo `manifest.json` que se encuentra en la raiz del proyecto.
 
 ## 🤝 Contribuir
 
@@ -76,7 +105,8 @@ Si quieres probar la extensión o contribuir al código:
 
 5. Abre un **Pull Request**.
 
-_**Nota**: omitiendo la comedia, se lo más descriptivo posible con los nombres que uses._
+> [!NOTE] 
+> Omitiendo la comedia, se lo más descriptivo posible con los nombres que uses.
 
 ## 📝 Licencia
 
