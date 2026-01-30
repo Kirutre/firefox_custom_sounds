@@ -40,7 +40,7 @@
 ## ⬇️ Instalación
 
 ### Para Usuarios
-*Próximamente disponible en Firefox Add-ons (AMO).* Por ahora, puedes instalarlo manualmente descargando el Release o siguiendo los pasos de desarrollo.
+[**Ya disponible en AMO**](https://addons.mozilla.org/es-ES/firefox/addon/custom-sounds/) o, si prefieres, puedes instalarlo manualmente descargando el Release o siguiendo los pasos de desarrollo.
 
 ### Guia para Desarrolladores (Instalación Manual)
 Si deseas modificar la extensión o contribuir al código, sigue estos pasos para configurar tu entorno local.
