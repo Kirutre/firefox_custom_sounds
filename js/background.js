@@ -1,3 +1,5 @@
+const browser = window.browser || window.chrome;
+
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
     const data = await browser.storage.local.get('custom_sounds_config');
@@ -64,12 +66,14 @@ const handleTabRemoved = async (tabId, removeInfo) => {
 };
 
 
-browser.tabs.onCreated.addListener(async (tab) => await handleTabCreated(tab));
-browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => await handleTabRemoved(tabId, removeInfo));
+browser.tabs.onCreated.addListener(tab => handleTabCreated(tab));
+browser.tabs.onRemoved.addListener((tabId, removeInfo) => handleTabRemoved(tabId, removeInfo));
 
-browser.runtime.onMessage.addListener(async (message) => {
+browser.runtime.onMessage.addListener(message => {
     if (message.action === 'play_sound') {
-        await playSoundByEvent(message.eventKey);
+        console.log("test2")
+
+        playSoundByEvent(message.eventKey);
     }
 });
 

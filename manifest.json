@@ -3,7 +3,7 @@
   "name": "Custom Sounds",
   "version": "1.0.1",
   "author": "Kirutre",
-  "description": "Add customizable sounds to firefox",
+  "description": "Add customizable sounds to chrome",
   "homepage_url": "https://github.com/Kirutre/firefox_custom_sounds",
 
   "browser_specific_settings": {
@@ -31,7 +31,7 @@
   ],
 
   "background": {
-    "scripts": ["js/background.js"]
+    "service_worker": "js/background.js"
   },
 
   "options_ui": {

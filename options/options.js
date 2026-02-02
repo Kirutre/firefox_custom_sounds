@@ -9,6 +9,8 @@ const dropdownEventListButtonText = document.getElementById('dropdown-button-tex
 const eventListMenu = document.getElementById('dropdown-menu');
 const setKeyButton = document.getElementById('set-key');
 
+const browser = window.browser || window.chrome;
+
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
     const data = await browser.storage.local.get('custom_sounds_config');
