@@ -1,31 +1,39 @@
-const browser = window.browser || window.chrome;
+const userBrowser = typeof browser !== 'undefined' ? browser : chrome;
+
+
+const createOffscreenDom = async () => {
+    const contexts = await userBrowser.runtime.getContexts({ contextTypes: ["OFFSCREEN_DOCUMENT"] });
+
+    if (contexts.length > 0)    return;
+
+    await userBrowser.offscreen.createDocument({
+        url: "../offscreen/offscreen.html",
+        reasons: ["AUDIO_PLAYBACK"],
+        justification: "Play event sounds"
+    });
+}   
+
 
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
-    const data = await browser.storage.local.get('custom_sounds_config');
+    const data = await userBrowser.storage.local.get('custom_sounds_config');
 
     return data.custom_sounds_config || {};
 }
 
 
 /** @param {string} soundURL */
-const playSound = soundURL => {
+const playSound = async (soundURL) => {
     if (!soundURL) {
         console.error('Sound URL not provided');    return;
     }
 
-    const audio = new Audio(soundURL);
-    audio.src = soundURL;
+    await createOffscreenDom();
 
-    audio.load();
-
-    audio.play()
-        .then(() => {
-            console.log(`Sound played: ${soundURL}`);
-        })
-        .catch(error => {
-            console.error(`Error playing sound: ${soundURL}, error: ${error}`);
-        });
+    userBrowser.runtime.sendMessage({
+        target: 'offscreen_audio',
+        url: soundURL
+    });
 };
 
 /** @param {string} eventName */
@@ -66,10 +74,12 @@ const handleTabRemoved = async (tabId, removeInfo) => {
 };
 
 
-browser.tabs.onCreated.addListener(tab => handleTabCreated(tab));
-browser.tabs.onRemoved.addListener((tabId, removeInfo) => handleTabRemoved(tabId, removeInfo));
+userBrowser.tabs.onCreated.addListener(tab => handleTabCreated(tab));
+userBrowser.tabs.onRemoved.addListener((tabId, removeInfo) => handleTabRemoved(tabId, removeInfo));
 
-browser.runtime.onMessage.addListener(message => {
+userBrowser.runtime.onMessage.addListener(message => {
+    console.log(2);
+
     if (message.action === 'play_sound') {
         console.log("test2")
 
@@ -78,10 +88,10 @@ browser.runtime.onMessage.addListener(message => {
 });
 
 //* Open the options page
-browser.action.onClicked.addListener(() => {
-    const optionsUrl = browser.runtime.getURL("options/options.html");
+userBrowser.action.onClicked.addListener(() => {
+    const optionsUrl = userBrowser.runtime.getURL("options/options.html");
 
-    browser.tabs.create({
+    userBrowser.tabs.create({
         url: optionsUrl,
         active: true
     })

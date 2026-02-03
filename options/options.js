@@ -403,4 +403,4 @@ addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// TODO: create the popup for alerts and warnings
+// TODO: create the popup for alerts and warnings, CHECK WHY TYPEOF ISN'T WORK IN OPTIONS
