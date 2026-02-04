@@ -11,8 +11,8 @@
 ---
 
 ## 🖼️ Imagenes
-### Pagina de Configuraciones
-![Pagina de opciones](/example_images/options_page.png "Pagina de configuraciones")
+### Página de Configuraciones
+![Página de opciones](/example_images/options_page.png "Página de configuraciones")
 
 ### Modal para personalizar los Eventos
 ![Modal](/example_images/modal.png "Modal de eventos")
@@ -24,9 +24,14 @@
    * ➕ Abrir/Cerrar pestañas.
    * ⌨️ Pulsaciones de teclas.
 
-- 🛠️ **Configuración sencilla:** interfaz intuitiva para gestionar tus archivos de audio.
+- 🛠️ **Configuración Sencilla:** interfaz intuitiva para gestionar tus archivos de audio.
 
 - 🚀 **Ligero:** optimizado para no afectar el rendimiento del navegador.
+
+## ⏭️ Próximas Características
+- 🎚️ **Controlador de Volumen:** para que seas tú quien decida qué tan rápido destrozar tus oídos.
+
+- ⌨️ **Múltiples teclas, mismo sonido:** para que asignes tus sonidos favoritos a tu teclado.
 
 ## 💻 Tecnologías utilizadas
 * JavaScript (WebExtensionAPI): para la lógica de fondo y eventos del navegador.
@@ -42,7 +47,7 @@
 ### Para Usuarios
 [**Ya disponible en AMO**](https://addons.mozilla.org/es-ES/firefox/addon/custom-sounds/) o, si prefieres, puedes instalarlo manualmente descargando el Release o siguiendo los pasos de desarrollo.
 
-### Guia para Desarrolladores (Instalación Manual)
+### Guía para Desarrolladores (Instalación Manual)
 Si deseas modificar la extensión o contribuir al código, sigue estos pasos para configurar tu entorno local.
 
 1. **Clona este repositorio**
@@ -52,26 +57,26 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
    cd firefox_custom_sounds
    ```
 
-2. **Gestion de Estilos (Tailwind CSS)**
+2. **Gestión de Estilos (Tailwind CSS)**
 
    Esta extensión utiliza Tailwind CSS para la interfaz. El archivo `output.css` ya viene incluido en el repositorio para que la extensión funcione inmediatamente, pero si realizas cambios en el diseño, deberás recompilarlo.
 
    #### Recompilar `output.css`
    1. Descarga el ejecutable de la CLI según tu sistema operativo desde [Tailwind CSS Releases](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.1.18).
 
-   2. Coloca el ejecutable en la raiz del proyecto y renombralo a `tailwindcss-cli`.
+   2. Coloca el ejecutable en la raíz del proyecto y renombralo a `tailwindcss-cli`.
 
    3. Ejecuta el siguiente comando para compilar y observar cambios en tiempo real.
 
    ```bash
-   ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch
+   ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch --minify
    ```
 
 > [!TIP]
 > Si tienes `Node.js` instalado, puedes evitar descargar el binario manualmente usando:
 
    ```bash
-   npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch
+   npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch --minify
    ```
 
 3. **Cargar en Firefox para pruebas**
@@ -81,7 +86,7 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
 
    3. Haz click en "Cargar complemento temporal...".
 
-   4. Selecciona el archivo `manifest.json` que se encuentra en la raiz del proyecto.
+   4. Selecciona el archivo `manifest.json` que se encuentra en la raíz del proyecto.
 
 ## 🤝 Contribuir
 ¡Las contribuciones son lo que hacen mejorar al software, y estoy encantado de ver que puedes ofrecer!
@@ -97,7 +102,7 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
 5. Abre un **Pull Request**.
 
 > [!NOTE] 
-> Omitiendo la comedia, se lo más descriptivo posible con los nombres que uses.
+> Omitiendo la comedia, sé lo más descriptivo posible con los nombres que uses.
 
 ## 📝 Licencia
 Distribuido bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más información.

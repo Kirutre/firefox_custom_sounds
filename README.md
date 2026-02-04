@@ -12,7 +12,7 @@
 
 ## 🖼️ Images
 ### Settings Page
-![Pagina de opciones](/example_images/options_page.png "Settings page")
+![Settings Page](/example_images/options_page.png "Settings page")
 
 ### Event Customization Modal
 ![Modal](/example_images/modal.png "Event modal")
@@ -26,7 +26,12 @@
 
 - 🛠️ **Simple Configuration:** intuitive interface to manage your audio files.
 
-- 🚀 **Lightweight:** optimized to not affect browser performance.
+- 🚀 **Lightweight:** optimized to run without affecting browser performance.
+
+## ⏭️ Upcoming Features
+- 🎚️ **Volume Control:** because only you should decide how fast you want to wreck your eardrums.
+
+- ⌨️ **Multiple keys, same sound:** so you can map your favorite sounds across your entire keyboard.
 
 ## 💻 Technologies Used
 * JavaScript (WebExtensionAPI): for background logic and browser events.
@@ -64,14 +69,14 @@ If you want to modify the extension or contribute to the code, follow these step
     3. Run the following command to compile and watch changes in real-time.
 
     ```bash
-    ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch
+    ./tailwindcss-cli -i ./options/input.css -o ./options/output.css --watch --minify
     ```
 
 > [!TIP]
 > If you have Node.js installed, you can avoid downloading the binary manually by using:
 
     ```bash
-    npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch
+    npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch --minify
     ```
 
 3. **Load in Firefox for testing**
@@ -86,7 +91,7 @@ If you want to modify the extension or contribute to the code, follow these step
 ## 🤝 Contributing
 Contributions are what make software better, and I’m excited to see what you have to offer!
 
-1. **Fork** the proyect.
+1. **Fork** the project.
 
 2. Create a **Branch** for your development (`git checkout -b feature/destroy-this-extension`).
 
