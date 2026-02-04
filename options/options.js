@@ -47,7 +47,7 @@ const santizeEventName = (event) => {
 
 /** @param {string|null} eventAction    @returns {string} */
 const getButtonText = (eventAction) => {
-    if (!eventAction) {
+    if (!eventAction || eventAction === 'null') {
         return 'Set an action';
     }
 
@@ -202,24 +202,24 @@ const waitForKeyPress = async () => {
 }
 
 
-/** @param {string} soundUUID  @param {HTMLButtonElement} button */
-const handleKeyChange = async (soundUUID, button) => {
-    button.textContent = 'Press a key...';
-    button.disabled = true;
+/** @param {string} soundUUID */
+const handleKeyChange = async (soundUUID) => {
+    setKeyButton.textContent = 'Press a key...';
+    setKeyButton.disabled = true;
 
     const newEventKey = await waitForKeyPress();
 
     if (await isEventAlreadyUsed(newEventKey, soundUUID)) {
         console.warn(`The key ${newEventKey} is already used`);
 
-        button.textContent = 'Set a key';
-        button.disabled = false;
+        setKeyButton.textContent = 'Set a key';
+        setKeyButton.disabled = false;
 
         return;
     }
 
-    button.textContent = getButtonText(newEventKey);
-    button.disabled = false;
+    setKeyButton.textContent = getButtonText(newEventKey);
+    setKeyButton.disabled = false;
 
     changeEventDialog.dataset.eventAction = newEventKey;
 }
@@ -241,6 +241,8 @@ const handleSetBrowserEvent = async (event) => {
         dropdownEventListButtonText.textContent = 'Event list';
         setKeyButton.disabled = false;
 
+        changeEventDialog.dataset.eventAction = null;
+
         return;
     }
 
@@ -261,7 +263,7 @@ const handleShowDialog = async (soundUUID) => {
         dropdownEventListButtonText.textContent = getButtonText(eventAction);
 
         setKeyButton.disabled = true;
-    } else if (eventAction !== null) {
+    } else {
         setKeyButton.textContent = getButtonText(eventAction);
     }
 
@@ -363,14 +365,14 @@ eventListMenu.addEventListener('click', async (e) => {
 setKeyButton.addEventListener('click', async () => {
     const soundUUID = changeEventDialog.dataset.soundUUID;
 
-    await handleKeyChange(soundUUID, setKeyButton);
+    await handleKeyChange(soundUUID);
 });
 
 saveDialogChanges.addEventListener('click', async () => {
     const soundUUID = changeEventDialog.dataset.soundUUID;
     let eventAction = changeEventDialog.dataset.eventAction;
 
-    if (eventAction === 'none-event') {
+    if (eventAction === 'none-event' || eventAction === 'null') {
         eventAction = null;
     }
 
