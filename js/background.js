@@ -6,16 +6,14 @@ const getExtensionData = async () => {
 }
 
 
-/** @param {string} soundURL */
-const playSound = soundURL => {
+/** @param {string} soundURL  @param {number} volume */
+const playSound = (soundURL, volume) => {
     if (!soundURL) {
         console.error('Sound URL not provided');    return;
     }
 
     const audio = new Audio(soundURL);
-    audio.src = soundURL;
-
-    audio.load();
+    audio.volume = volume;
 
     audio.play()
         .then(() => {
@@ -35,7 +33,7 @@ const playSoundByEvent = async (eventName) => {
     );
 
     if (soundEntry && soundEntry.soundURL) {
-        playSound(soundEntry.soundURL);
+        playSound(soundEntry.soundURL, soundEntry.volume / 100);
     }
 }
 

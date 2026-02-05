@@ -84,9 +84,9 @@ const isEventAlreadyUsed = async (eventAction, soundUUID) => {
 /** 
  * @param {string} soundUUID  @param {string} soundName
  * @param {string} eventKey   @param {boolean} state
- * @returns {HTMLLIElement}
+ * @param {number} volume     @returns {HTMLLIElement}
 */
-const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
+const createLiElement = (soundUUID, soundName, eventKey, state = true, volume = 100) => {
     const li = document.createElement('li');
     li.dataset.uuid = soundUUID;
     li.className = 'flex items-center justify-evenly bg-slate-900 p-3 rounded-lg shadow-md shrink';
@@ -114,6 +114,25 @@ const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
 
     divSwitch.append(inputCheck, labelCheck);
 
+    const divVolumeController = document.createElement('div');
+    divVolumeController.className = 'relative group flex items-center justify-center w-12 h-12';
+
+    const spanVolumeToolTip = document.createElement('span');
+    spanVolumeToolTip.className = 'volume-tooltip absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-violet-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg';
+    spanVolumeToolTip.textContent = `${volume}%`
+
+    const divKnob = document.createElement('div');
+    divKnob.className = 'knob w-8 h-8 bg-slate-800 rounded-full border-2 border-slate-600 cursor-pointer relative shadow-inner flex justify-center items-start pt-1 transform rotate-0 transition-transform duration-75 select-none';
+
+    const knobRotation = (volume * 2.7) - 135;
+    divKnob.style.transform = `rotate(${knobRotation}deg)`;
+
+    const divIndicator = document.createElement('div');
+    divIndicator.className = 'w-1 h-2 bg-violet-400 rounded-full shadow-lg shadow-violet-400/80';
+
+    divKnob.append(divIndicator);
+    divVolumeController.append(spanVolumeToolTip, divKnob);
+
     const buttonDelete = document.createElement('button');
     buttonDelete.className = 'sound-delete group w-10 h-11 cursor-pointer';
     buttonDelete.innerHTML = `
@@ -123,7 +142,7 @@ const createLiElement = (soundUUID, soundName, eventKey, state = true) => {
             <path class="trash-can-lid transition-transform duration-300 origin-[70%_50%] group-hover:-translate-y-0.5 group-hover:rotate-12" d="M4 4q-1 0-1-.5 0-.5 1-.5h2q0-2 1-2h2q1 0 1 2h2q1 0 1 .5 0 .5-1 .5h-8M7 3v-1h2v1" fill-rule="evenodd"/>
         </svg>`;
 
-    li.append(pName, buttonShowDialog, divSwitch, buttonDelete);
+    li.append(pName, buttonShowDialog, divSwitch, divVolumeController, buttonDelete);
 
     return li;
 }
@@ -141,7 +160,8 @@ const saveSound = async (soundUUID, sound) => {
             soundURL,
             name: sound.name,
             eventKey: null,
-            active: true
+            active: true,
+            volume: 100
         }
     };
 
@@ -150,8 +170,8 @@ const saveSound = async (soundUUID, sound) => {
     });
 }
 
-/** @param {string} soundUUID  @param {string} eventAction  @param {boolean} eventState */
-const updateSound = async (soundUUID, eventAction, eventState = true) => {
+/** @param {string} soundUUID  @param {string} eventAction  @param {boolean} eventState  @param {number} */
+const updateSound = async (soundUUID, eventAction, eventState, soundVolume) => {
     const storageData = await getExtensionData();
 
     if (!storageData[soundUUID]) {
@@ -164,6 +184,10 @@ const updateSound = async (soundUUID, eventAction, eventState = true) => {
 
     if (eventState !== undefined) {
         storageData[soundUUID].active = eventState;
+    }
+
+    if (soundVolume !== undefined) {
+        storageData[soundUUID].volume = soundVolume;
     }
 
     await browser.storage.local.set({
@@ -295,6 +319,43 @@ const handleCloseWithAnimation = (element) => {
     }, {once: true});
 }
 
+/** @param {PointerEvent} mouseDownEvent @param {string} soundUUID @param {HTMLDivElement} knob */
+const handleVolumeChange = async (mouseDownEvent, soundUUID, knob) => {
+    const tooltip = knob.previousElementSibling;
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    let lastPercent = 0;
+
+    const updateValue = (e) => {
+        const rect = knob.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const angleRad = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+        let angleDeg = (angleRad * 180) / Math.PI + 90;
+
+        // Limitar el arco a 270 grados
+        if (angleDeg > 180) angleDeg -= 360;
+        angleDeg = Math.max(-135, Math.min(135, angleDeg));
+
+        knob.style.transform = `rotate(${angleDeg}deg)`;
+
+        lastPercent = Math.round(((angleDeg + 135) / 270) * 100);
+        tooltip.innerText = `${lastPercent}%`;
+    };
+
+    updateValue(mouseDownEvent);
+
+    window.addEventListener('mousemove', updateValue, { signal });
+
+    window.addEventListener('mouseup', async () => {        
+        controller.abort(); 
+
+        await updateSound(soundUUID, undefined, undefined, lastPercent);
+    }, { signal, once: true });
+};
+
 
 saveSoundButton.addEventListener('click', async () => {
     if (uploadSoundButton.files.length === 0) {
@@ -320,6 +381,7 @@ soundList.addEventListener('click', async (e) => {
     const deleteButton = e.target.closest('.sound-delete');
     const showDialogButton = e.target.closest('.show-dialog');
     const changeStateButton = e.target.closest('.event-check');
+    
 
     if (deleteButton) {
         const soundLiElement = deleteButton.closest('li');
@@ -341,7 +403,19 @@ soundList.addEventListener('click', async (e) => {
         const soundLiElement = changeStateButton.closest('li');
 
         if (soundLiElement) {
-            await updateSound(soundLiElement.dataset.uuid, undefined, changeStateButton.checked);
+            await updateSound(soundLiElement.dataset.uuid, undefined, changeStateButton.checked, undefined);
+        }
+    }
+});
+
+soundList.addEventListener('mousedown', async (e) => {
+    const volumeControllerKnob = e.target.closest('.knob');
+
+    if (volumeControllerKnob) {
+        const soundLiElement = volumeControllerKnob.closest('li');
+
+        if (soundLiElement) {
+            await handleVolumeChange(e, soundLiElement.dataset.uuid, volumeControllerKnob);
         }
     }
 });
@@ -376,7 +450,7 @@ saveDialogChanges.addEventListener('click', async () => {
         eventAction = null;
     }
 
-    await updateSound(soundUUID, eventAction, undefined);
+    await updateSound(soundUUID, eventAction, undefined, undefined);
 
     const buttonShowDialog = document.querySelector(`[data-uuid=${soundUUID}] .show-dialog`);
     buttonShowDialog.textContent = getButtonText(eventAction);
@@ -397,7 +471,7 @@ addEventListener('DOMContentLoaded', async () => {
     const storageData = await getExtensionData();
 
     Object.entries(storageData).forEach(([soundUUID, data]) => {
-        const soundLiElement =  createLiElement(soundUUID, data.name, data.eventKey, data.active);
+        const soundLiElement =  createLiElement(soundUUID, data.name, data.eventKey, data.active, data.volume);
 
         soundList.appendChild(soundLiElement);
     });
