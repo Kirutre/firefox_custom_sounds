@@ -75,9 +75,9 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
 > [!TIP]
 > Si tienes `Node.js` instalado, puedes evitar descargar el binario manualmente usando:
 
-   ```bash
-   npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch --minify
-   ```
+```bash
+npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch --minify
+```
 
 3. **Cargar en Firefox para pruebas**
    1. Abre Firefox y escribe `about:debugging` en la barra de direcciones.
