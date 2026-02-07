@@ -28,7 +28,7 @@
 
 - 🚀 **Ligero:** optimizado para no afectar el rendimiento del navegador.
 
-## ⏭️ Próximas Características
+## ⏭️ ~~Próximas Características~~ Características Finalizadas
 - 🎚️ **Controlador de Volumen:** para que seas tú quien decida qué tan rápido destrozar tus oídos.
 
 - ⌨️ **Múltiples teclas, mismo sonido:** para que asignes tus sonidos favoritos a tu teclado.

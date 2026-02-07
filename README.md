@@ -28,7 +28,7 @@
 
 - 🚀 **Lightweight:** optimized to run without affecting browser performance.
 
-## ⏭️ Upcoming Features
+## ⏭️ ~~Upcoming Features~~ Features Completed
 - 🎚️ **Volume Control:** because only you should decide how fast you want to wreck your eardrums.
 
 - ⌨️ **Multiple keys, same sound:** so you can map your favorite sounds across your entire keyboard.
