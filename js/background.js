@@ -5,6 +5,13 @@ const getExtensionData = async () => {
     return data.custom_sounds_config || {};
 }
 
+/** @param {Object} data  @param {string} key   @returns {Array<Object>} */
+const getActiveSounds = (data, key) => {
+    return Object.values(data).filter(sound => 
+        sound.eventKey === key && sound.active
+    );
+}
+
 
 /** @param {string} soundURL  @param {number} volume */
 const playSound = (soundURL, volume) => {
@@ -28,12 +35,19 @@ const playSound = (soundURL, volume) => {
 const playSoundByEvent = async (eventName) => {
     const storageData = await getExtensionData();
 
-    const soundEntry = Object.values(storageData).find(sound =>
-        sound.eventKey === eventName && sound.active === true
-    );
+    const sounds = getActiveSounds(storageData, eventName);
+    const validSounds = (sounds.length > 0 || eventName === 'all-keys') ?
+        sounds :
+        getActiveSounds(storageData, 'all-keys')
 
-    if (soundEntry && soundEntry.soundURL) {
-        playSound(soundEntry.soundURL, soundEntry.volume / 100);
+    if (validSounds.length === 0) {
+        return console.warn(`No sounds found with ${eventName} event`);
+    }
+
+    const {soundURL, volume} = validSounds[Math.floor(Math.random() * validSounds.length)];
+
+    if (soundURL) {
+        playSound(soundURL, volume / 100);
     }
 }
 

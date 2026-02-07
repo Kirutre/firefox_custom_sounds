@@ -68,17 +68,12 @@ const doesSoundExist = async (soundName) => {
 /** @param {string} eventAction  @param {string} soundUUID     @returns {Promise<boolean>} */
 const isEventAlreadyUsed = async (eventAction, soundUUID) => {
     const storageData = await getExtensionData();
-    const sounds = Object.entries(storageData);
 
-    const isUsed = sounds.some(([uuid, data]) => {
-        if (uuid === soundUUID) {
-            return false;
-        }
-
-        return data.eventKey === eventAction;
+    return Object.entries(storageData).some(([uuid, data]) => {
+        return uuid !== soundUUID &&
+               data.eventKey !== 'all-keys' &&
+               data.eventKey === eventAction;
     });
-
-    return isUsed;
 }
 
 /** 
