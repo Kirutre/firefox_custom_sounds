@@ -12,10 +12,10 @@
 
 ## 🖼️ Imagenes
 ### Página de Configuraciones
-![Página de opciones](/example_images/options_page.png "Página de configuraciones")
+![Página de opciones](/images/options_page.png "Página de configuraciones")
 
 ### Modal para personalizar los Eventos
-![Modal](/example_images/modal.png "Modal de eventos")
+![Modal](/images/modal.png "Modal de eventos")
 
 ---
 

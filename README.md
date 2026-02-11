@@ -12,10 +12,10 @@
 
 ## 🖼️ Images
 ### Settings Page
-![Settings Page](/example_images/options_page.png "Settings page")
+![Settings Page](/images/options_page.png "Settings page")
 
 ### Event Customization Modal
-![Modal](/example_images/modal.png "Event modal")
+![Modal](/images/modal.png "Event modal")
 
 ---
 

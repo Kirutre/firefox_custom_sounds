@@ -9,9 +9,11 @@ const dropdownEventListButtonText = document.getElementById('dropdown-button-tex
 const eventListMenu = document.getElementById('dropdown-menu');
 const setKeyButton = document.getElementById('set-key');
 
+const userBrowser = typeof browser !== 'undefined' ? browser : chrome;
+
 /** @returns {Promise<Object>} */
 const getExtensionData = async () => {
-    const data = await browser.storage.local.get('custom_sounds_config');
+    const data = await userBrowser.storage.local.get('custom_sounds_config');
 
     return data.custom_sounds_config || {};
 }
@@ -160,7 +162,7 @@ const saveSound = async (soundUUID, sound) => {
         }
     };
 
-    await browser.storage.local.set({
+    await userBrowser.storage.local.set({
         'custom_sounds_config': newStoragedata
     });
 }
@@ -185,7 +187,7 @@ const updateSound = async (soundUUID, eventAction, eventState, soundVolume) => {
         storageData[soundUUID].volume = soundVolume;
     }
 
-    await browser.storage.local.set({
+    await userBrowser.storage.local.set({
         'custom_sounds_config': storageData
     });
 }
@@ -198,7 +200,7 @@ const deleteSound = async (soundToDelete) => {
 
     delete storageData[UUIDToDelete];
             
-    await browser.storage.local.set({
+    await userBrowser.storage.local.set({
         'custom_sounds_config': storageData
     });
 
