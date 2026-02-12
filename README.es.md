@@ -1,16 +1,17 @@
-# 🎵 Firefox Custom Sounds
+# 🎵 Custom Sounds
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Firefox](https://img.shields.io/badge/Firefox-Add--on-orange.svg)](https://addons.mozilla.org/firefox/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Firefox](https://img.shields.io/badge/Firefox-Add--on-orange.svg)](https://addons.mozilla.org/es-ES/firefox/addon/custom-sounds/)
+[![Chromium](https://img.shields.io/badge/Chromium-Extension-4285F4.svg)](https://chrome.google.com/webstore)
 
 ### Idiomas disponibles
 [![Language: English](https://img.shields.io/badge/Language-English-blue.svg)](README.md) [![Idioma: Español](https://img.shields.io/badge/Idioma-Español-red.svg)](README.es.md)
 
-**Firefox Custom Sounds** es una extensión diseñada para personalizar la experiencia al navegar por internet añadiendo efectos de sonido a diferentes acciones dentro del navegador Firefox.
+**Custom Sounds** es una extensión diseñada para personalizar la experiencia al navegar por internet añadiendo efectos de sonido a diferentes acciones dentro de tu navegador.
 
 ---
 
-## 🖼️ Imagenes
+## 🖼️ Imágenes
 ### Página de Configuraciones
 ![Página de opciones](/images/options_page.png "Página de configuraciones")
 
@@ -26,9 +27,9 @@
 
 - 🛠️ **Configuración Sencilla:** interfaz intuitiva para gestionar tus archivos de audio.
 
-- 🚀 **Ligero:** optimizado para no afectar el rendimiento del navegador.
+- 🚀 **Ligero:** optimizado para no afectar el rendimiento al navegar.
 
-## ⏭️ ~~Próximas Características~~ Características Finalizadas
+## ⏭️ ~~Próximas Características~~ Características Finalizadas!!!
 - 🎚️ **Controlador de Volumen:** para que seas tú quien decida qué tan rápido destrozar tus oídos.
 
 - ⌨️ **Múltiples teclas, mismo sonido:** para que asignes tus sonidos favoritos a tu teclado.
@@ -40,21 +41,19 @@
 
 * CSS (Tailwind CSS): para el diseño de la interfaz.
 
-* Firefox Browser API: para el manejo de pestañas y eventos.
-
 ## ⬇️ Instalación
 
 ### Para Usuarios
-[**Ya disponible en AMO**](https://addons.mozilla.org/es-ES/firefox/addon/custom-sounds/) o, si prefieres, puedes instalarlo manualmente descargando el Release o siguiendo los pasos de desarrollo.
+[**Ya disponible en AMO**](https://addons.mozilla.org/es-ES/firefox/addon/custom-sounds/) o, si prefieres, puedes instalarlo manualmente descargando el .zip de distribución correspondiente a tu navegador en el [Último Release](https://github.com/kirutre/custom_sounds/releases/latest) o siguiendo los pasos de desarrollo.
 
 ### Guía para Desarrolladores (Instalación Manual)
 Si deseas modificar la extensión o contribuir al código, sigue estos pasos para configurar tu entorno local.
 
 1. **Clona este repositorio**
    ```bash
-   git clone https://github.com/Kirutre/firefox_custom_sounds.git
+   git clone https://github.com/Kirutre/custom_sounds.git
 
-   cd firefox_custom_sounds
+   cd custom_sounds
    ```
 
 2. **Gestión de Estilos (Tailwind CSS)**
@@ -79,14 +78,28 @@ Si deseas modificar la extensión o contribuir al código, sigue estos pasos par
 npx @tailwindcss/cli -i ./options/input.css -o ./options/output.css --watch --minify
 ```
 
-3. **Cargar en Firefox para pruebas**
-   1. Abre Firefox y escribe `about:debugging` en la barra de direcciones.
+3. **Cargar para pruebas**
+   + En Firefox
+      1. Renombra el archivo `manifest-firefox.json` a `manifest.json`.
 
-   2. Haz clic en "Este Firefox".
+      2. Abre Firefox y escribe `about:debugging` en la barra de direcciones.
 
-   3. Haz click en "Cargar complemento temporal...".
+      3. Haz clic en "Este Firefox".
 
-   4. Selecciona el archivo `manifest.json` que se encuentra en la raíz del proyecto.
+      4. Haz click en "Cargar complemento temporal...".
+
+      5. Selecciona el archivo `manifest.json` que se encuentra en la raíz del proyecto.
+   
+   + En Chromium
+      1. Renombra el archivo `manifest-chromium.json` a `manifest.json`.
+
+      2. Abre tu navegador basado en Chromium y escribe `chrome://extensions/` en la barra de direcciones.
+
+      3. Activa el "Modo de Desarrollador".
+
+      4. Haz clic en "Cargar descomprimido" o "Cargar desempaquetado".
+
+      5. Selecciona la carpeta raíz del proyecto (donde está el manifest.json).
 
 ## 🤝 Contribuir
 ¡Las contribuciones son lo que hacen mejorar al software, y estoy encantado de ver que puedes ofrecer!
@@ -112,4 +125,4 @@ Kirutre - [GitHub](https://github.com/kirutre)
 
 Kirutre - contact.kirutre+firefox@gmail.com
 
-Link del proyecto: https://github.com/Kirutre/firefox_custom_sounds
+Link del proyecto: https://github.com/Kirutre/custom_sounds

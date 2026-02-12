@@ -4,7 +4,7 @@
   "version": "1.0.2",
   "author": "Kirutre",
   "description": "Add customizable sounds to your browser",
-  "homepage_url": "https://github.com/Kirutre/firefox_custom_sounds",
+  "homepage_url": "https://github.com/Kirutre/custom_sounds",
 
   "browser_specific_settings": {
     "gecko": {
