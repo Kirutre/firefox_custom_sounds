@@ -52,7 +52,7 @@ jobs:
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
-          filename: 'firefox-dist-${{ env.TAG_NAME }}.zip'
+          filename: 'firefox-code-${{ env.TAG_NAME }}.zip'
           exclusions: > 
             *.git* /.github/* .gitignore /offscreen/*
             /svg/arrow.svg /svg/close.svg /svg/trash.svg
@@ -107,7 +107,7 @@ jobs:
         uses: thedoctor0/zip-release@0.7.6
         with:
           type: 'zip'
-          filename: 'firefox-dist-${{ env.TAG_NAME }}.zip'
+          filename: 'chromium-code-${{ env.TAG_NAME }}.zip'
           exclusions: > 
             *.git* /.github/* .gitignore
             /svg/arrow.svg /svg/close.svg /svg/trash.svg
@@ -116,5 +116,5 @@ jobs:
       - name: Upload zip
         uses: ncipollo/release-action@v1.20.0
         with:
-          artifacts: "chm-code-${{ env.TAG_NAME }}.zip"
+          artifacts: "chromium-code-${{ env.TAG_NAME }}.zip"
           allowUpdates: true
