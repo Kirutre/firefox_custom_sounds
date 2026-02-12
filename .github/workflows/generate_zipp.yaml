@@ -1,0 +1,37 @@
+name: Create .zip files for publication
+
+on:
+  push:
+    tags:
+      - v*
+
+env:
+  TAG_NAME: ${{ github.ref_name }}
+
+jobs:
+  create_and_push_ff_dist_zip:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create manifest
+        run: cp manifest-firefox.json manifest.json
+
+      - name: Create zip
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          type: 'zip'
+          filename: 'firefox-dist-${{ env.TAG_NAME }}.zip'
+          exclusions: > 
+            /.github/* /images/* /offscreen/* /options/input.css /sounds/*
+            /svg/arrow.svg /svg/close.svg /svg/trash.svg 
+            .gitignore manifest-chromium.json manifest-firefox.json
+            README.es.md README.md
+      
+      - name: Upload zip
+        uses: ncipollo/release-action@v1.20.0
+        with:
+          artifacts: "firefox-dist-${{ env.TAG_NAME }}.zip"
